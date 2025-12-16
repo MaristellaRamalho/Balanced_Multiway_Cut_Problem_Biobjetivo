@@ -1,14 +1,33 @@
 #pragma once
 
 #include "instance/instance.hpp"
+#include <vector>
+#include <iostream>
 
-namespace motsp {
+namespace bmcp {
 /***************************************************
  * The Solution class represents a solution for the
- * Multi-Objective Travelling Salesman Problem.
+ * Balanced Multiway Cut Problem (Biobjective).
  ***************************************************/
 class Solution {
     public:
+
+    /****************************
+     * The instance been solved.
+     ****************************/
+     const Instance & instance;
+
+    /****************************
+     * Partição de cada vértice -> partitions[u] = k, o vértice u pertence à partição k
+     ****************************/
+    std::vector<int> partitions;
+
+    /*************************
+     * The solution's cost -> cost[0] : custo do corte, cost[1] : balanceamento
+     *************************/
+    std::vector<double> cost;
+
+
     /**********************************************************
      * Returns true if costA dominates costB; false otherwise.
      *
@@ -19,73 +38,7 @@ class Solution {
      **********************************************************/
     static bool dominates(const std::vector<double> & costA,
                           const std::vector<double> & costB);
-
-    /****************************
-     * The instance been solved.
-     ****************************/
-    const Instance & instance;
-
-    /****************************
-     * The Hamiltonian cycle.
-     ****************************/
-    std::vector<unsigned> cycle;
-
-    /*************************
-     * The solution's cost.
-     *************************/
-    std::vector<double> cost;
-
-    private:
-    /************************
-     * Normalizes the cycle.
-     ************************/
-    void normalize_cycle();
-
-    /***************************************************
-     * Computes the cycle from the key.
-     *
-     * @param key the key.
-     ***************************************************/
-    void compute_cycle(const std::vector<double> & key);
-
-    /******************************
-     * Initializes a new solution.
-     ******************************/
-    void init();
-
-    public:
-    /**********************************************
-     * Constructs a new solution.
-     *
-     * @param instance the instance been solved.
-     * @param cycle    the Hamiltonian cycle.
-     **********************************************/
-    Solution(const Instance & instance,
-             const std::vector<unsigned> & cycle);
-
-    /**************************************************************
-     * Constructs a new solution.
-     *
-     * @param instance the instance been solved.
-     * @param key      the key representing the Hamiltonian cycle.
-     **************************************************************/
-    Solution(const Instance & instance,
-             const std::vector<double> & key);
-
-    /********************************
-     * Constructs an empty solution.
-     ********************************/
-    Solution();
-
-    /*********************************************
-     * Verifies whether this solution is
-     * feasible for the instance been solved.
-     *
-     * @return true if this solution is feasible;
-     *         false otherwise.
-     *********************************************/
-    bool is_feasible() const;
-
+    
     /*******************************************************************
      * Verifies whether this solution dominates the specified one.
      *
@@ -95,6 +48,29 @@ class Solution {
      *         false otherwise.
      *******************************************************************/
     bool dominates(const Solution & solution) const;
+
+    private:
+    /******************************
+     * Initializes a new solution.
+     ******************************/
+    void init();
+
+    public:
+    /**********************************************
+     * Constructs a new solution
+     **********************************************/
+    Solution(const Instance & instance);
+
+
+    /********************************
+     * Constructs an empty solution.
+     ********************************/
+    Solution();
+
+    // Constrói uma solução preenchida
+    Solution(const Instance & instance, 
+             const std::vector<int> & partitions, 
+             const std::vector<double> & cost);
 
     /*******************************************************
      * Standard input operator.

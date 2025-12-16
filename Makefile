@@ -303,7 +303,6 @@ nsbrkga_solver_test : $(BIN)/test/nsbrkga_solver_test
 
 $(BIN)/exec/nsbrkga_solver_exec : $(BIN)/instance/instance.o \
                                   $(BIN)/solution/solution.o \
-                                  $(BIN)/solver/local_search/two_opt.o \
                                   $(BIN)/solver/solver.o \
                                   $(BIN)/solver/nsbrkga/decoder.o \
                                   $(BIN)/solver/nsbrkga/nsbrkga_solver.o \

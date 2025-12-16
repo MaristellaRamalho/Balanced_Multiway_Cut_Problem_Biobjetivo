@@ -3,7 +3,7 @@
 #include "solution/solution.hpp"
 #include <pagmo/population.hpp>
 
-namespace motsp {
+namespace bmcp {
 /****************************************************
  * The Solver abstract class represents a solver for
  * the Multi-Objective Travelling Salesman Problem.

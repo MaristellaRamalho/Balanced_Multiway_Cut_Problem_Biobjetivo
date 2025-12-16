@@ -1,6 +1,7 @@
 #include "solver/nsbrkga/nsbrkga_solver.hpp"
+#include "instance/instance.hpp"
 
-namespace motsp {
+namespace bmcp {
 
 NSBRKGA_Solver::NSBRKGA_Solver(const Instance & instance)
     : Solver::Solver(instance) {}
@@ -68,9 +69,7 @@ void NSBRKGA_Solver::capture_snapshot(
 void NSBRKGA_Solver::solve() {
     this->start_time = std::chrono::steady_clock::now();
 
-    Decoder decoder(this->instance,
-                    this->num_threads,
-                    this->max_local_search_iterations);
+    Decoder decoder(this->instance);
 
     NSBRKGA::NsbrkgaParams params;
     params.num_incumbent_solutions = this->max_num_solutions;
@@ -90,7 +89,7 @@ void NSBRKGA_Solver::solve() {
     NSBRKGA::NSBRKGA algorithm(decoder,
                              this->instance.senses,
                              this->seed,
-                             this->instance.num_vertices - 1,
+                             this->instance.num_nodes,
                              params,
                              this->num_threads);
 
@@ -260,8 +259,7 @@ void NSBRKGA_Solver::solve() {
     this->best_solutions.clear();
 
     for(const auto & best_individual : this->best_individuals) {
-        this->best_solutions.push_back(Solution(this->instance,
-                                                best_individual.second));
+        this->best_solutions.push_back(decoder.decode_to_solution(best_individual.second));
     }
 
     this->solving_time = this->elapsed_time();

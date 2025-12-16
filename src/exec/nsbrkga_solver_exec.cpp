@@ -8,7 +8,7 @@ int main (int argc, char * argv[]) {
 
     if(arg_parser.option_exists("--instance")) {
         std::ifstream ifs;
-        motsp::Instance instance;
+        bmcp::Instance instance;
         ifs.open(arg_parser.option_value("--instance"));
 
         if(ifs.is_open()) {
@@ -40,7 +40,7 @@ int main (int argc, char * argv[]) {
             std::vector<std::vector<std::vector<double>>>>>
                 initial_populations_snapshots;
 
-        motsp::NSBRKGA_Solver solver(instance);
+        bmcp::NSBRKGA_Solver solver(instance);
 
         if(arg_parser.option_exists("--seed")) {
             solver.set_seed(std::stoul(arg_parser.option_value("--seed")));
@@ -211,67 +211,6 @@ int main (int argc, char * argv[]) {
                     arg_parser.option_value(
                         "--initial-individuals-time-percentage"));
         }
-
-        // Não inicializo a pop com heurísticas construtivas : branch ans cut do gurobi e Christofides do lemom
-        /*
-        if(initial_individuals_method == 1) {
-            motsp::Christofides_Solver initial_solver(instance);
-
-            initial_solver.set_seed(solver.seed);
-            initial_solver.time_limit = double(solver.time_limit) *
-                initial_individuals_time_percentage;
-            initial_solver.iterations_limit = double(solver.population_size) *
-                initial_individuals_percentage;
-            initial_solver.max_num_solutions = double(solver.population_size) *
-                initial_individuals_percentage;
-            initial_solver.max_num_snapshots = double(solver.max_num_snapshots)
-                * initial_individuals_percentage;
-
-            initial_solver.solve();
-
-            solver.initial_individuals = initial_solver.best_individuals;
-            initial_time = initial_solver.solving_time;
-            initial_iterations = initial_solver.num_iterations;
-            initial_best_solutions_snapshots =
-                initial_solver.best_solutions_snapshots;
-            initial_num_non_dominated_snapshots =
-                initial_solver.num_non_dominated_snapshots;
-            initial_num_fronts_snapshots = initial_solver.num_fronts_snapshots;
-            initial_populations_snapshots =
-                initial_solver.populations_snapshots;
-            solver.num_snapshots = initial_solver.num_snapshots;
-            solver.max_num_snapshots -= initial_solver.num_snapshots;
-        /*    
-        } else if (initial_individuals_method == 2) {
-            motsp::Branch_and_Cut_Solver initial_solver(instance);
-
-            initial_solver.set_seed(solver.seed);
-            initial_solver.time_limit = double(solver.time_limit) *
-                initial_individuals_time_percentage;
-            initial_solver.iterations_limit = double(solver.population_size) *
-                initial_individuals_percentage;
-            initial_solver.max_num_solutions = double(solver.population_size) *
-                initial_individuals_percentage;
-            initial_solver.max_num_snapshots = double(solver.max_num_snapshots)
-                * initial_individuals_percentage;
-
-            initial_solver.solve();
-
-            solver.initial_individuals = initial_solver.best_individuals;
-            initial_time = initial_solver.solving_time;
-            initial_iterations = initial_solver.num_iterations;
-            initial_best_solutions_snapshots =
-                initial_solver.best_solutions_snapshots;
-            initial_num_non_dominated_snapshots =
-                initial_solver.num_non_dominated_snapshots;
-            initial_num_fronts_snapshots = initial_solver.num_fronts_snapshots;
-            initial_populations_snapshots =
-                initial_solver.populations_snapshots;
-            solver.num_snapshots = initial_solver.num_snapshots;
-            solver.max_num_snapshots -= initial_solver.num_snapshots;
-            
-        } // tirei a parte que usa Branch and cut do gurobi e Christofides do lemom
-         */
 
         solver.time_limit -= initial_time;
         solver.iterations_limit -= initial_iterations;

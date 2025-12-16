@@ -2,26 +2,23 @@
 
 #include "solution/solution.hpp"
 #include "chromosome.hpp"
+#include "instance/instance.hpp"
+#include <vector>
 
-namespace motsp {
+namespace bmcp {
 
 class Decoder {
     public:
     const Instance & instance;
 
-    std::vector<std::vector<std::pair<double, unsigned>>> permutations;
+    Decoder(const Instance & instance);
 
-    unsigned max_local_search_iterations;
-
-    std::vector<std::vector<unsigned>> cycles;
-
-    std::vector<std::vector<double>> costs;
-
-    Decoder(const Instance & instance,
-            unsigned num_threads,
-            unsigned max_local_search_iterations = 0);
-
+    // Método principal chamado pelo NSBRKGA
+    // Permite modificar o cromossomo se rewrite == true
     std::vector<double> decode(NSBRKGA::Chromosome & chromosome, bool rewrite);
+
+    // Método auxiliar para criar o objeto Solution completo (const)
+    Solution decode_to_solution(const std::vector<double>& chromosome) const;
 };
 
-}
+} // namespace bmcp

@@ -1,6 +1,6 @@
 #include "solver/solver.hpp"
 
-namespace motsp {
+namespace bmcp {
 
 Solver::Solver(const Instance & instance)
     : instance(instance) {
@@ -193,7 +193,11 @@ void Solver::capture_snapshot(const pagmo::population & pop) {
 std::ostream & operator <<(std::ostream & os, const Solver & solver) {
     os << "Number of objectives: " << solver.instance.num_objectives
        << std::endl
-       << "Number of vertices: " << solver.instance.num_vertices << std::endl
+       << "Melhor solução - corte: " << solver.best_solutions[0].cost[0]
+       << std::endl
+       << "Melhor solução - balanceamento: " << solver.best_solutions[0].cost[1]
+       << std::endl
+       << "Number of vertices: " << solver.instance.num_nodes << std::endl
        << "Seed: " << solver.seed << std::endl
        << "Time limit: " << solver.time_limit << std::endl
        << "Iterations limit: " << solver.iterations_limit << std::endl

@@ -3,10 +3,10 @@
 #include "solver/solver.hpp"
 #include "solver/nsbrkga/decoder.hpp"
 
-namespace motsp {
+namespace bmcp {
 /*************************************************************
  * The NSBRKGA_Solver represents a solver for the
- * Multi-Objective Travelling Salesman Problem using the
+ * Multiway Cut Probelm (biojective) using the
  * Non-Dominated Sorting Biased Random-Key Genetic Algorithm.
  *************************************************************/
 class NSBRKGA_Solver : public Solver {
