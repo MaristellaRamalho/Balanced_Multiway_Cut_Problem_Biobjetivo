@@ -24,10 +24,6 @@ mkdir -p ${path}/populations_snapshots
 mkdir -p ${path}/num_elites_snapshots
 mkdir -p ${path}/hypervolume
 mkdir -p ${path}/hypervolume_snapshots
-mkdir -p ${path}/igd_plus
-mkdir -p ${path}/igd_plus_snapshots
-mkdir -p ${path}/multiplicative_epsilon
-mkdir -p ${path}/multiplicative_epsilon_snapshots
 mkdir -p ${path}/metrics
 mkdir -p ${path}/metrics_snapshots
 

@@ -1,126 +1,122 @@
 #include "instance/instance.hpp"
 #include <algorithm>
 #include <cmath>
+#include <sstream>
+#include <limits>
+#include <iomanip>
+#include <vector>
 
-namespace motsp {
+namespace bmcp
+{
 
-void Instance::init() {
-    this->adj.resize(this->num_objectives, std::vector<std::vector<double>>(
-                this->num_vertices,
-                std::vector<double>(this->num_vertices, 0.0)));
-    this->adj.assign(this->num_objectives, std::vector<std::vector<double>>(
-                this->num_vertices,
-                std::vector<double>(this->num_vertices, 0.0)));
+    void Instance::init()
+    {
+        this->num_objectives = 2; // (custo do corte, balanceamento)
 
-    this->primal_bound.resize(this->num_objectives, 0.0);
-    this->primal_bound.assign(this->num_objectives, 0.0);
+        this->senses.resize(this->num_objectives, NSBRKGA::Sense::MINIMIZE);
+        this->senses.assign(this->num_objectives, NSBRKGA::Sense::MINIMIZE);
 
-    this->senses.resize(this->num_objectives, NSBRKGA::Sense::MINIMIZE);
-    this->senses.assign(this->num_objectives, NSBRKGA::Sense::MINIMIZE);
+        this->primal_bound.resize(this->num_objectives, 0.0);
 
-    std::vector<std::vector<double>> edge_weight(this->num_objectives);
+        // ponto de refenecina objetivo 1: pior corte possivel -> soma dos custos de todas as arestas
+        this->primal_bound[0] = (double)this->cumulative_edge_cost;
 
-    for(unsigned i = 0; i < this->num_objectives; i++) {
-        for(unsigned u = 0; u < this->num_vertices; u++) {
-            for(unsigned v = 0; v < this->num_vertices; v++) {
-                double dx = this->coord[i][u].first - this->coord[i][v].first,
-                       dy = this->coord[i][u].second - this->coord[i][v].second,
-                       dist = round(sqrt(dx * dx + dy * dy));
-
-                this->adj[i][u][v] = dist;
-                edge_weight[i].push_back(dist);
-            }
-        }
-
-        std::sort(edge_weight[i].rbegin(), edge_weight[i].rend());
-
-        for(unsigned u = 0; u < this->num_vertices; u++) {
-            this->primal_bound[i] += edge_weight[i][u];
-        }
-    }
-}
-
-Instance::Instance(const std::vector<std::vector<std::vector<double>>> & adj) :
-    num_objectives(adj.size()),
-    num_vertices(adj.front().size()),
-    adj(adj),
-    senses(num_objectives, NSBRKGA::Sense::MINIMIZE) {}
-
-
-Instance::Instance(
-        const std::vector<std::vector<std::pair<double, double>>> & coord) :
-    num_objectives(coord.size()),
-    num_vertices(coord.front().size()),
-    coord(coord) {
-    this->init();
-}
-
-Instance::Instance() {}
-
-bool Instance::is_valid() const {
-    if(this->adj.size() != this->num_objectives) {
-        return false;
+        // ponto de referencia objetivo 2: pior balanceamento -> próximo do número total de nós
+        this->primal_bound[1] = (double)this->num_nodes;
     }
 
-    for(unsigned i = 0; i < this->num_objectives; i++) {
-        if(this->adj[i].size() != this->num_vertices) {
+    Instance::Instance() : num_objectives(2),
+                           num_nodes(0),
+                           num_edges(0),
+                           num_terminals(0),
+                           cumulative_edge_cost(0) {}
+
+    bool Instance::is_valid() const
+    {
+        if (this->num_nodes == 0)
             return false;
-        }
-
-        for(unsigned u = 0; u < this->num_vertices; u++) {
-            if(this->adj[i][u].size() != this->num_vertices) {
-                return false;
-            }
-
-            if(this->primal_bound[i] < 0.0) {
-                return false;
-            }
-
-            for(unsigned v = 0; v < this->num_vertices; v++) {
-                if(this->adj[i][u][v] < 0.0) {
-                    return false;
-                }
-            }
-        }
+        if (this->terminals.size() != this->num_terminals)
+            return false;
+        if (this->cumulative_edge_cost == 0 && this->num_edges > 0)
+            return false;
+        return true;
     }
 
-    return true;
-}
+    std::istream &operator>>(std::istream &is, Instance &instance)
+    {
+        std::string line;
+        std::string mark, discard;
+        unsigned u, v, terminal;
+        double cost;
 
-std::istream & operator >>(std::istream & is, Instance & instance) {
-    is >> instance.num_objectives >> instance.num_vertices;
+        instance.cumulative_edge_cost = 0;
+        instance.terminals.clear();
 
-    instance.coord = std::vector<std::vector<std::pair<double, double>>>(
-            instance.num_objectives,
-            std::vector<std::pair<double, double>>(instance.num_vertices));
+        // lógica para ler instancia do arquivo
+        //  ignorar primeira linha (cabeçalho)
 
-    for(unsigned v = 0; v < instance.num_vertices; v++) {
-        for(unsigned i = 0; i < instance.num_objectives; i++) {
-            is >> instance.coord[i][v].first >> instance.coord[i][v].second;
-        }
-    }
+        if (!std::getline(is, line))
+            return is;
 
-    instance.init();
+        // lendo rotulos dos terminais na linha 2
+        if (std::getline(is, line))
+        {
+            std::stringstream lineStream(line);
 
-    return is;
-}
+            lineStream >> instance.num_terminals;
 
-std::ostream & operator <<(std::ostream & os, const Instance & instance) {
-    os << instance.num_objectives << ' '
-       << instance.num_vertices << std::endl;
-
-    for(unsigned v = 0; v < instance.num_vertices; v++) {
-        for(unsigned i = 0; i < instance.num_objectives - 1; i++) {
-            os << instance.coord[i][v].first << ' '
-               << instance.coord[i][v].second << ' ';
+            while (lineStream >> terminal)
+            {
+                instance.terminals.push_back(terminal);
+            }
         }
 
-        os << instance.coord[instance.num_objectives - 1][v].first << ' '
-           << instance.coord[instance.num_objectives - 1][v].second
-           << std::endl;
+        // lendo numero de nós e arestas
+        if (!(is >> mark >> discard >> instance.num_nodes >> instance.num_edges))
+            return is;
+
+        // redimensiona o Grafo
+        instance.G.clear();
+        instance.G.resize(instance.num_nodes + 1);
+
+        // lendo as arestas
+        for (unsigned i = 0; i < instance.num_edges; i++)
+        {
+            is >> mark >> u >> v >> cost;
+            instance.G[u].push_back({v, (unsigned int)cost});
+            instance.G[v].push_back({u, (unsigned int)cost});
+
+            // increment acumulative cost
+            instance.cumulative_edge_cost += cost;
+        }
+
+        instance.init();
+        return is;
     }
 
-    return os;
+    std::ostream &operator<<(std::ostream &os, const Instance &instance)
+    {
+        os << "BMCP Instance:" << std::endl;
+        os << "Nodes: " << instance.num_nodes << ", Edges: " << instance.num_edges << std::endl;
+        os << "Terminals (" << instance.num_terminals << "): ";
+        for (auto t : instance.terminals)
+            os << t << " ";
+        os << std::endl;
+        os << "Cumulative Cost: " << instance.cumulative_edge_cost << std::endl;
+        os << "Bounds: [" << instance.primal_bound[0] << ", " << instance.primal_bound[1] << "]" << std::endl;
+
+        return os;
+    }
+
+    int Instance::get_edge_index(unsigned u, unsigned v) const
+{
+    const std::vector<edge>& u_list = this->G[u];
+
+    for (unsigned edge_index = 0; edge_index < u_list.size(); edge_index++)
+        if (u_list[edge_index].dst == v)
+            return edge_index;
+
+    return -1;
 }
 
 }

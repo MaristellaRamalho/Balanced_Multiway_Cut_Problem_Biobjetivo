@@ -6,97 +6,103 @@
 #include <istream>
 #include <ostream>
 #include <vector>
+#include <string>
 
-namespace motsp {
-/***************************************************
- * The Instance class represents an instance of the
- * Multi-Objective Travelling Salesman Problem.
- ***************************************************/
-class Instance {
+namespace bmcp
+{
+    /***************************************************
+     * The Instance class represents an instance of the
+     * Balanced Multiway Cut Problem (Biobjective).
+     ***************************************************/
+    class Instance
+    {
     public:
-    /****************************
-     * The number of objectives.
-     ****************************/
-    unsigned num_objectives;
+        /****************************
+         * The number of objectives.
+         ****************************/
+        unsigned num_objectives;
 
-    /**************************
-     * The number of vertices.
-     **************************/
-    unsigned num_vertices;
+        /*********************************
+         * The optimization senses.
+         *********************************/
+        std::vector<NSBRKGA::Sense> senses;
 
-    /**********************************************************
-     * The vertices coordinates.
-     **********************************************************/
-    std::vector<std::vector<std::pair<double, double>>> coord;
+        /********************************
+         * This instance primal bounds.
+         ********************************/
+        std::vector<double> primal_bound;
 
-    /**************************************************
-     * The adjacency matrices.
-     **************************************************/
-    std::vector<std::vector<std::vector<double>>> adj;
+        /**************************
+         * The number of vertices.
+         **************************/
+        unsigned num_nodes;
 
-    /*********************************
-     * The optimization senses.
-     *********************************/
-    std::vector<NSBRKGA::Sense> senses;
+        /**************************
+         * The number of edges.
+         **************************/
+        unsigned num_edges;
 
-    /********************************
-     * This instance primal bounds.
-     ********************************/
-    std::vector<double> primal_bound;
+        /**************************
+         * The number of terminals.
+         **************************/
+        unsigned num_terminals;
+
+        /**************************
+         * Accumulated sum of edges cost.
+         **************************/
+        unsigned cumulative_edge_cost;
+
+        /**************************
+         * Representation of edges (the source node is represented by the adjacency list index where the arc e is).
+         **************************/
+        typedef struct
+        {
+            unsigned dst;
+            unsigned cost;
+        } edge;
+
+        /**************************
+         * Graph in adjascency list representation.
+         **************************/
+        std::vector<std::vector<edge>> G;
+
+        /**************************
+         * Terminal set S
+         **************************/
+        std::vector<unsigned> terminals;
 
     private:
-    /******************************
-     * Initializes a new instance.
-     ******************************/
-    void init();
+        /******************************
+         * Initializes a new instance.
+         ******************************/
+        void init();
 
     public:
-    /********************************************************************
-     * Constructs a new instance.
-     *
-     * @param adj the adjacency matrices.
-     ********************************************************************/
-    Instance(const std::vector<std::vector<std::vector<double>>> & adj);
+        /********************************
+         * Constructs an empty instance.
+         ********************************/
+        Instance();
 
-    /****************************************************************************
-     * Constructs a new instance.
-     *
-     * @param coord the coordinates of the vertices.
-     ****************************************************************************/
-    Instance(const std::vector<std::vector<std::pair<double, double>>> & coord);
+        /***********************************************************
+         * Verifies whether this instance is valid.
+         * @return true if this instance is valid; false otherwise.
+         ***********************************************************/
+        bool is_valid() const;
 
-    /********************************
-     * Constructs an empty instance.
-     ********************************/
-    Instance();
 
-    /***********************************************************
-     * Verifies whether this instance is valid.
-     *
-     * @return true if this instance is valid; false otherwise.
-     ***********************************************************/
-    bool is_valid() const;
+        // returns the position where the arc (i,j) is in the adjacency list of i or returns -1 if the arc does not exist.
+        int get_edge_index(unsigned u, unsigned v) const;
 
-    /**************************************************************************
-     * Standard input operator.
-     *
-     * @param is       standard input stream object.
-     * @param instance the instance.
-     *
-     * @return the stream object.
-     **************************************************************************/
-    friend std::istream & operator >>(std::istream & is, Instance & instance);
+        /**************************************************************************
+         * Standard input operator.
+         **************************************************************************/
+        friend std::istream &operator>>(std::istream &is, Instance &instance);
 
-    /*************************************************************
-     * Standard output operator.
-     *
-     * @param os       standard output stream object.
-     * @param instance the instance.
-     *
-     * @return the stream object.
-     *************************************************************/
-    friend std::ostream & operator <<(std::ostream & os,
-                                      const Instance & instance);
-};
+        /*************************************************************
+         * Standard output operator.
+         *************************************************************/
+        friend std::ostream &operator<<(std::ostream &os,
+                                        const Instance &instance);
+    };
 
 }
