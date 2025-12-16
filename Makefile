@@ -1,10 +1,14 @@
 CPP=g++
 CARGS=-std=c++17 -O3 -g0 -m64
 BRKGAINC=-I ../nsbrkga/nsbrkga
-LEMONINC=-I /opt/lemon/include -L /opt/lemon/lib -lemon
-GRBINC=-I /opt/gurobi1003/linux64/include/ -L /opt/gurobi1003/linux64/lib -lgurobi_c++ -lgurobi100 -lm
-BOOSTINC=-I /opt/boost/include -L /opt/boost/lib -lboost_serialization
-PAGMOINC=-I /opt/pagmo/include -L /opt/pagmo/lib -Wl,-R/opt/pagmo/lib -lpagmo -ltbb -pthread
+LEMONINC=
+GRBINC=
+BOOSTINC=
+PAGMOINC=-lpagmo -ltbb -pthread
+#LEMONINC=-I /opt/lemon/include -L /opt/lemon/lib -lemon
+#GRBINC=-I /opt/gurobi1003/linux64/include/ -L /opt/gurobi1003/linux64/lib -lgurobi_c++ -lgurobi100 -lm
+#BOOSTINC=-I /opt/boost/include -L /opt/boost/lib -lboost_serialization
+#PAGMOINC=-I /opt/pagmo/include -L /opt/pagmo/lib -Wl,-R/opt/pagmo/lib -lpagmo -ltbb -pthread
 INC=-I src $(BRKGAINC) $(LEMONINC) $(GRBINC) $(BOOSTINC) $(PAGMOINC)
 MKDIR=mkdir -p
 RM=rm -rf
@@ -301,9 +305,6 @@ $(BIN)/exec/nsbrkga_solver_exec : $(BIN)/instance/instance.o \
                                   $(BIN)/solution/solution.o \
                                   $(BIN)/solver/local_search/two_opt.o \
                                   $(BIN)/solver/solver.o \
-                                  $(BIN)/solver/weighted_sum/christofides/christofides_solver.o \
-                                  $(BIN)/solver/weighted_sum/branch_and_cut/branch_and_cut_callback.o \
-                                  $(BIN)/solver/weighted_sum/branch_and_cut/branch_and_cut_solver.o \
                                   $(BIN)/solver/nsbrkga/decoder.o \
                                   $(BIN)/solver/nsbrkga/nsbrkga_solver.o \
                                   $(BIN)/utils/argument_parser.o \

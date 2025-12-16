@@ -1,21 +1,21 @@
 Number of objectives: 2
 Number of vertices: 100
 Seed: 305089489
-Time limit: 900
+Time limit: 15
 Iterations limit: 4294967295
 Initial individuals: 0
 Maximum number of solutions: 500
 Maximum number of snapshots: 30
-Factor at which the time between snapshots are increased: 1.40976
+Factor at which the time between snapshots are increased: 1.25568
 Factor at which the iterations between snapshots are increased: 1
-Number of iterations: 54824
-Solutions obtained: 314
-Solving time: 900.01
+Number of iterations: 3580
+Solutions obtained: 182
+Solving time: 15.0015
 Number of snapshots: 30
-Time next snapshot: 900.021
-Time when the last snapshot was taken: 900.009
+Time next snapshot: 15.0069
+Time when the last snapshot was taken: 15.0012
 Number of iteration of the next snapshot: 4294967295
-Iteration when the last snapshot was taken: 54824
+Iteration when the last snapshot was taken: 3580
 Number of individuals in each population: 300
 Minimum percentage of individuals to become the elite set: 0.1
 Maximum percentage of individuals to become the elite set: 0.3
@@ -38,12 +38,12 @@ Interval at which the populations are reset: 500
 The intensity of the reset: 0.2
 Number of threads to be used during parallel decoding: 1
 Maximum number of local search iterations: 0
-Last update generation: 54712
-Last update time: 898.178
-Largest number of generations between improvements: 1515
-Total path relink time: 0.385597
-Total path relink calls: 109
+Last update generation: 3572
+Last update time: 14.967
+Largest number of generations between improvements: 220
+Total path relink time: 0.00904225
+Total path relink calls: 7
 Improvements in the elite set: 0
 Best individual improvements: 0
-Total shakings calls: 133
-Total resets calls: 13
+Total shakings calls: 2
+Total resets calls: 0

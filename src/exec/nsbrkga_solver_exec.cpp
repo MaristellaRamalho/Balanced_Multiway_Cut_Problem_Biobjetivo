@@ -1,6 +1,6 @@
 #include "utils/argument_parser.hpp"
-#include "solver/weighted_sum/christofides/christofides_solver.hpp"
-#include "solver/weighted_sum/branch_and_cut/branch_and_cut_solver.hpp"
+//#include "solver/weighted_sum/christofides/christofides_solver.hpp"
+//#include "solver/weighted_sum/branch_and_cut/branch_and_cut_solver.hpp"
 #include "solver/nsbrkga/nsbrkga_solver.hpp"
 
 int main (int argc, char * argv[]) {
@@ -212,6 +212,8 @@ int main (int argc, char * argv[]) {
                         "--initial-individuals-time-percentage"));
         }
 
+        // Não inicializo a pop com heurísticas construtivas : branch ans cut do gurobi e Christofides do lemom
+        /*
         if(initial_individuals_method == 1) {
             motsp::Christofides_Solver initial_solver(instance);
 
@@ -239,6 +241,7 @@ int main (int argc, char * argv[]) {
                 initial_solver.populations_snapshots;
             solver.num_snapshots = initial_solver.num_snapshots;
             solver.max_num_snapshots -= initial_solver.num_snapshots;
+        /*    
         } else if (initial_individuals_method == 2) {
             motsp::Branch_and_Cut_Solver initial_solver(instance);
 
@@ -266,7 +269,9 @@ int main (int argc, char * argv[]) {
                 initial_solver.populations_snapshots;
             solver.num_snapshots = initial_solver.num_snapshots;
             solver.max_num_snapshots -= initial_solver.num_snapshots;
-        }
+            
+        } // tirei a parte que usa Branch and cut do gurobi e Christofides do lemom
+         */
 
         solver.time_limit -= initial_time;
         solver.iterations_limit -= initial_iterations;
