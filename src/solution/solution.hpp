@@ -18,9 +18,9 @@ class Solution {
      const Instance & instance;
 
     /****************************
-     * Partição de cada vértice -> partitions[u] = k, o vértice u pertence à partição k
+     * Components Size
      ****************************/
-    std::vector<int> partitions;
+    std::vector<unsigned> components_size;
 
     /*************************
      * The solution's cost -> cost[0] : custo do corte, cost[1] : balanceamento
@@ -67,9 +67,9 @@ class Solution {
      ********************************/
     Solution();
 
-    // Constrói uma solução preenchida
+    // Constrói uma solução preenchida -> usado pelo Decoder e Solver
     Solution(const Instance & instance, 
-             const std::vector<int> & partitions, 
+             const std::vector<unsigned> & components_size, 
              const std::vector<double> & cost);
 
     /*******************************************************

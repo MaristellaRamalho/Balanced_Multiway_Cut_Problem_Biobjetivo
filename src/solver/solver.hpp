@@ -58,7 +58,7 @@ class Solver {
     unsigned num_iterations = 0;
 
     /****************************************************************
-     * The best individuals found.
+     * The best individuals found -> ([custos], cromossomo)
      ****************************************************************/
     std::vector<std::pair<std::vector<double>, std::vector<double>>>
         best_individuals = {};

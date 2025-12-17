@@ -1,6 +1,16 @@
+Components_size[ 0] = 14
+Components_size[ 1] = 17
+Components_size[ 2] = 19
+Components_size[ 3] = 16
+Components_size[ 4] = 20
+Components_size[ 5] = 10
+Components_size[ 6] = 14
+Components_size[ 7] = 19
+Components_size[ 8] = 11
+Components_size[ 9] = 20
 Number of objectives: 2
-Melhor solução - corte: 1710
-Melhor solução - balanceamento: 18
+Best_solutions[0] - corte: 1674
+Best_solutions[0] - balanceamento: 1.25
 Number of vertices: 160
 Seed: 1602347
 Time limit: 16
@@ -8,16 +18,16 @@ Iterations limit: 4294967295
 Initial individuals: 0
 Maximum number of solutions: 500
 Maximum number of snapshots: 30
-Factor at which the time between snapshots are increased: 1.239
+Factor at which the time between snapshots are increased: 1.22511
 Factor at which the iterations between snapshots are increased: 1
-Number of iterations: 3135
-Solutions obtained: 2
-Solving time: 16.002
+Number of iterations: 2893
+Solutions obtained: 5
+Solving time: 16.0007
 Number of snapshots: 30
-Time next snapshot: 16.0063
-Time when the last snapshot was taken: 16.002
+Time next snapshot: 16.0046
+Time when the last snapshot was taken: 16.0007
 Number of iteration of the next snapshot: 4294967295
-Iteration when the last snapshot was taken: 3135
+Iteration when the last snapshot was taken: 2893
 Number of individuals in each population: 300
 Minimum percentage of individuals to become the elite set: 0.1
 Maximum percentage of individuals to become the elite set: 0.3
@@ -40,12 +50,12 @@ Interval at which the populations are reset: 500
 The intensity of the reset: 0.2
 Number of threads to be used during parallel decoding: 1
 Maximum number of local search iterations: 0
-Last update generation: 2958
-Last update time: 15.1199
-Largest number of generations between improvements: 2073
-Total path relink time: 0.0114195
-Total path relink calls: 6
+Last update generation: 2225
+Last update time: 12.3517
+Largest number of generations between improvements: 2003
+Total path relink time: 0.00985012
+Total path relink calls: 5
 Improvements in the elite set: 0
 Best individual improvements: 0
-Total shakings calls: 11
-Total resets calls: 4
+Total shakings calls: 13
+Total resets calls: 5

@@ -191,11 +191,16 @@ void Solver::capture_snapshot(const pagmo::population & pop) {
 }
 
 std::ostream & operator <<(std::ostream & os, const Solver & solver) {
+
+    for(int i = 0; i < solver.instance.num_terminals; i++){
+        os << "Components_size[ " << i << "] = " << solver.best_solutions[0].components_size[i] << std::endl;
+    }
+
     os << "Number of objectives: " << solver.instance.num_objectives
        << std::endl
-       << "Melhor solução - corte: " << solver.best_solutions[0].cost[0]
+       << "Best_solutions[0] - corte: " << solver.best_solutions[0].cost[0]
        << std::endl
-       << "Melhor solução - balanceamento: " << solver.best_solutions[0].cost[1]
+       << "Best_solutions[0] - balanceamento: " << solver.best_solutions[0].cost[1]
        << std::endl
        << "Number of vertices: " << solver.instance.num_nodes << std::endl
        << "Seed: " << solver.seed << std::endl

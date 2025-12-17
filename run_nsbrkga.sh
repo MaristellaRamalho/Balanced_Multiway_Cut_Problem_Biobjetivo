@@ -1,6 +1,6 @@
 #!/bin/bash
 
-instances=(N4_K1)
+instances=(N640_M8N_K80_3)
 solvers=(nsbrkga)
 seeds=(1089661 1602347 1644410)
 versions=(best median)
