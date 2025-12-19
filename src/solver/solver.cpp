@@ -203,6 +203,9 @@ std::ostream & operator <<(std::ostream & os, const Solver & solver) {
        << "Best_solutions[0] - balanceamento: " << solver.best_solutions[0].cost[1]
        << std::endl
        << "Number of vertices: " << solver.instance.num_nodes << std::endl
+        <<"Number of edges: " << solver.instance.num_edges << std::endl
+       << "Seed: " << solver.seed << std::endl
+        <<"Number of terminals: " << solver.instance.num_terminals << std::endl
        << "Seed: " << solver.seed << std::endl
        << "Time limit: " << solver.time_limit << std::endl
        << "Iterations limit: " << solver.iterations_limit << std::endl

@@ -12,7 +12,7 @@ int main(int argc, char * argv[]) {
     std::ifstream ifs;
     std::string line;
     std::stringstream ss;
-    motsp::Instance instance;
+    bmcp::Instance instance;
 
     for(num_objectives = 0;
         arg_parser.option_exists("--instance-" +
@@ -52,7 +52,7 @@ int main(int argc, char * argv[]) {
         }
     }
 
-    instance = motsp::Instance(coord);
+    instance = bmcp::Instance(coord);
 
     std::cout << instance;
 

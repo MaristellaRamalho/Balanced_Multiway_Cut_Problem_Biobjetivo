@@ -9,7 +9,7 @@ int main(int argc, char * argv[]) {
 
     if(arg_parser.option_exists("--instance")) {
         std::ifstream ifs;
-        motsp::Instance instance;
+        bmcp::Instance instance;
         ifs.open(arg_parser.option_value("--instance"));
 
         if(ifs.is_open()) {
@@ -62,7 +62,7 @@ int main(int argc, char * argv[]) {
                         pareto.push_back(std::make_pair(value, std::vector<double>()));
                     }
 
-                    motsp::Solver::update_best_individuals(reference_pareto,
+                    bmcp::Solver::update_best_individuals(reference_pareto,
                                                            pareto,
                                                            instance.senses,
                                                            max_num_solutions);
@@ -109,7 +109,7 @@ int main(int argc, char * argv[]) {
                                 std::make_pair(value, std::vector<double>()));
                         }
 
-                        motsp::Solver::update_best_individuals(
+                        bmcp::Solver::update_best_individuals(
                             reference_pareto,
                             best_solutions_snapshot,
                             instance.senses,

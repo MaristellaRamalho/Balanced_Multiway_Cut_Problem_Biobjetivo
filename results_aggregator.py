@@ -18,7 +18,7 @@ for instance in instances:
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter=",")
                     for row in data:
-                        metrics.append(["MOTSP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[0], float(row[0])])
+                        metrics.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[0], float(row[0])])
                     csv_file.close()
 
 for instance in instances:
@@ -29,7 +29,7 @@ for instance in instances:
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter=",")
                     for row in data:
-                        metrics.append(["MOTSP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[1], float(row[0])])
+                        metrics.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[1], float(row[0])])
                     csv_file.close()
 
 for instance in instances:
@@ -40,7 +40,7 @@ for instance in instances:
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter=",")
                     for row in data:
-                        metrics.append(["MOTSP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[2], float(row[0])])
+                        metrics.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[2], float(row[0])])
                     csv_file.close()
 
 df_metrics = pd.DataFrame(metrics, columns=["problem", "instance", "number of objectives", "chromosome size", "number of vertices", "solver", "seed", "metric name", "metric value"])
@@ -93,7 +93,7 @@ for instance in instances:
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter = ",")
                     for row in data:
-                        metrics_snapshots.append(["MOTSP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[0], float(row[1]), float(row[2])])
+                        metrics_snapshots.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[0], float(row[1]), float(row[2])])
                     csv_file.close()
 
 for instance in instances:
@@ -104,7 +104,7 @@ for instance in instances:
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter = ",")
                     for row in data:
-                        metrics_snapshots.append(["MOTSP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[1], float(row[1]), float(row[2])])
+                        metrics_snapshots.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[1], float(row[1]), float(row[2])])
                     csv_file.close()
 
 for instance in instances:
@@ -115,7 +115,7 @@ for instance in instances:
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter = ",")
                     for row in data:
-                        metrics_snapshots.append(["MOTSP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[2], float(row[1]), float(row[2])])
+                        metrics_snapshots.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[2], float(row[1]), float(row[2])])
                     csv_file.close()
 
 df_metrics_snapshots = pd.DataFrame(metrics_snapshots, columns=["problem", "instance", "number of objectives", "chromosome size", "solver", "seed", "metric name", "snapshot time", "metric value"])

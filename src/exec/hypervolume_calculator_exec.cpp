@@ -50,7 +50,7 @@ int main(int argc, char * argv[]) {
     if(arg_parser.option_exists("--instance") &&
        arg_parser.option_exists("--reference-pareto")) {
         std::ifstream ifs;
-        motsp::Instance instance;
+        bmcp::Instance instance;
 
         ifs.open(arg_parser.option_value("--instance"));
 
