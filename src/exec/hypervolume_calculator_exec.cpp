@@ -126,11 +126,14 @@ int main(int argc, char * argv[]) {
                         std::istringstream iss(line);
                         std::vector<double> cost(instance.num_objectives, 0.0);
 
-                        for(unsigned j = 0; j < instance.num_objectives; j++) {
-                            iss >> cost[j];
+                        if(line[0] != 'C'){
+                            for(unsigned j = 0; j < instance.num_objectives; j++) {
+                                iss >> cost[j];
+                            }
+                            paretos[i].push_back(cost);
+                        }else{
+                            break;
                         }
-
-                        paretos[i].push_back(cost);
                     }
 
                     ifs.close();

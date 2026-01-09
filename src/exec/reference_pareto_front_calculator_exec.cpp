@@ -55,11 +55,15 @@ int main(int argc, char * argv[]) {
                         std::istringstream iss(line);
                         std::vector<double> value(instance.num_objectives, 0.0);
 
-                        for(unsigned j = 0; j < instance.num_objectives; j++) {
-                            iss >> value[j];
+                        if(line[0] != 'C'){
+                            for(unsigned j = 0; j < instance.num_objectives; j++){
+                                iss >> value[j];
+                            }
+                            pareto.push_back(std::make_pair(value, std::vector<double>()));
+                        }else{
+                            break;
                         }
 
-                        pareto.push_back(std::make_pair(value, std::vector<double>()));
                     }
 
                     bmcp::Solver::update_best_individuals(reference_pareto,
