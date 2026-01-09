@@ -185,9 +185,10 @@ def main():
     
     pareto_files = glob.glob(os.path.join(PARETO_DIR, f"*{EXTENSION_PARETO}"))
     
-    total_files = len(pareto_files)
+    total_files = 0
     total_solutions = 0
     total_correct = 0
+    solucoes_obtidas_stats = 0
     
     arquivos_com_erro = []
     
@@ -198,11 +199,19 @@ def main():
         # Se o arquivo não tiver "_" ou parecer ser um arquivo de referência, pula
         # Ajuste esta condição conforme o padrão dos seus arquivos de referência
         # Exemplo: se o arquivo termina exatamente com _1.txt mas não tem o nome do algoritmo
-        if filename == "N160_M4N_K20_1.txt": 
+        parts_filname = filename.split("_")
+        
+        if len(parts_filname) == 4:
              print(f"[INFO] Ignorando arquivo da fronteira de  referência: {filename}")
              continue
         
+        if parts_filname[-1] == "best.txt" or parts_filname[-1] == "median.txt":
+            print(f"[INFO] Ignorando arquivo de best ou median {filename}")
+            continue
+        
         has_error = False 
+        total_files += 1
+
         
         # --- EXTRAÇÃO DO NOME DA INSTÂNCIA ---
         try:
@@ -266,6 +275,7 @@ def main():
         if stats_data:
             stats_n = int(stats_data.get("Number of vertices", -1))
             stats_k = int(stats_data.get("Number of terminals", -1))
+            solucoes_obtidas_stats += int(stats_data['Solutions obtained'])
             
             if stats_n != -1 and (stats_n != n or stats_k != k):
                 print(f"   [ALERTA] Divergência Stats vs Instância. N({stats_n}vs{n}), K({stats_k}vs{k})")
@@ -307,10 +317,16 @@ def main():
                 print(f"          Reportado : Cut={rep_c1}, Bal={rep_c2}")
                 print(f"          Calculado : Cut={calc_c1}, Bal={calc_c2}")
                 has_error = True
-        
+
+    
+        if solucoes_obtidas_stats != total_solutions:
+                print(f"   [ALERTA] Divergência Stats vs Verificador. Soluções obtidas verificador({total_solutions})vs soluções obtidas stats({solucoes_obtidas_stats})")
+
         if has_error:
             # Armazena CAMINHO COMPLETO
             arquivos_com_erro.append(os.path.abspath(p_file))
+
+            
     
     # =========================================================
     # RELATÓRIO FINAL
