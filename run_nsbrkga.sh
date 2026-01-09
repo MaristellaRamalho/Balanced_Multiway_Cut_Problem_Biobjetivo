@@ -1,6 +1,6 @@
 #!/bin/bash
 
-instances=(N160_M4N_K20_1)
+instances=(N160_M4N_K20_1 N160_M8N_K40_1 N320_M8N_K40_1 N320_M8N_K80_1 N640_M8N_K40_1 N640_M8N_K80_1)
 solvers=(nsbrkga)
 seeds=(1089661 1602347 1644410)
 versions=(best median)
@@ -100,7 +100,7 @@ eval $final_command
 
 wait
 
-instances=(N160_M4N_K20_1)
+instances=(N160_M4N_K20_1 N160_M8N_K40_1 N320_M8N_K40_1 N320_M8N_K80_1 N640_M8N_K40_1 N640_M8N_K80_1)
 solvers=(nsbrkga)
 
 commands=()
