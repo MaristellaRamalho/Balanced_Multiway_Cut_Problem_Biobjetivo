@@ -14,7 +14,7 @@ class NSBRKGA_Solver : public Solver {
     /********************************************
      * Number of individuals in each population.
      ********************************************/
-    unsigned population_size = 300;
+    unsigned population_size = 500;
 
     /********************************************************************
      * Minimum percentage of individuals to become the elite set (0, 1].
@@ -49,7 +49,7 @@ class NSBRKGA_Solver : public Solver {
     /**********************************************************************
      * Type of bias that will be used.
      **********************************************************************/
-    NSBRKGA::BiasFunctionType bias_type = NSBRKGA::BiasFunctionType::SQRT;
+    NSBRKGA::BiasFunctionType bias_type = NSBRKGA::BiasFunctionType::LOGINVERSE;
 
     /*****************************************************************
      * Type of diversity that will be used.
@@ -60,7 +60,7 @@ class NSBRKGA_Solver : public Solver {
     /**********************************************
      * Number of independent parallel populations.
      **********************************************/
-    unsigned num_populations = 3;
+    unsigned num_populations = 2;
 
     /**************************************************************************
      * Interval at which the elite solutions are exchanged between populations
@@ -84,7 +84,7 @@ class NSBRKGA_Solver : public Solver {
      *************************************************************/
     std::shared_ptr<NSBRKGA::DistanceFunctionBase> pr_dist_func =
         std::shared_ptr<NSBRKGA::DistanceFunctionBase>(
-            new NSBRKGA::EuclideanDistance());
+            new NSBRKGA::KendallTauDistance());
 
     /*****************************************
      * Percentage of the path to be computed.

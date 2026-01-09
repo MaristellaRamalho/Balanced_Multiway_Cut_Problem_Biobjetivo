@@ -18,9 +18,10 @@ class Solution {
      const Instance & instance;
 
     /****************************
-     * Components Size
+     * Componentes da Solução
      ****************************/
-    std::vector<unsigned> components_size;
+    std::vector<std::vector<unsigned>> componentes_solucao;
+
 
     /*************************
      * The solution's cost -> cost[0] : custo do corte, cost[1] : balanceamento
@@ -69,7 +70,7 @@ class Solution {
 
     // Constrói uma solução preenchida -> usado pelo Decoder e Solver
     Solution(const Instance & instance, 
-             const std::vector<unsigned> & components_size, 
+             const std::vector<std::vector<unsigned>> & componentes_solucao, 
              const std::vector<double> & cost);
 
     /*******************************************************

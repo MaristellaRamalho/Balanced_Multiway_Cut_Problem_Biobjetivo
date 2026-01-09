@@ -66,6 +66,7 @@ namespace bmcp
         }
 
         std::vector<unsigned> components_size;
+        std::vector<std::vector<unsigned>> componentes_solucao(instance.num_terminals,std::vector<unsigned>(0));
 
         // realiza a marcação dos nós que originalmente podem ser visitados a partir de um terminal
         double naturally_cut_cost = bfs_visited_nodes(color_node, visited_node, components_size);
@@ -84,7 +85,18 @@ namespace bmcp
         costs[0] = custo_corte;
         costs[1] = maxV / (double) balanceamentoPerfeito;
 
-        return Solution(instance, components_size, costs);
+        for(unsigned i = 0; i < instance.num_terminals; i++){
+            unsigned s = instance.terminals[i];
+            //cout << s << " = {";
+            for(unsigned u = 0; u < instance.num_nodes; u++){
+                if(color_node[u] == color_node[s]){
+                    //cout << u << " ";
+                    componentes_solucao[i].push_back(u);
+                }
+            }
+        }
+
+        return Solution(instance, componentes_solucao, costs);
 
 
     }

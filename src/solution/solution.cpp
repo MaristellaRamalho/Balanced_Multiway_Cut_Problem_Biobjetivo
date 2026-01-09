@@ -31,13 +31,13 @@ void Solution::init() {
 
 Solution::Solution(const Instance & instance):
     instance(instance),
-    components_size(instance.num_terminals, -1),
+    componentes_solucao(instance.num_terminals,std::vector<unsigned>(0)),
     cost(instance.num_objectives, 0.0){}
 
 Solution::Solution(const Instance & instance, 
-             const std::vector<unsigned> & components_size, 
+             const std::vector<std::vector<unsigned>>  &componentes_solucao, 
              const std::vector<double> & cost)
-    : instance(instance), components_size(components_size), cost(cost){}
+    : instance(instance), componentes_solucao(componentes_solucao), cost(cost){}
 
 
 bool Solution::dominates(const Solution & solution) const {
