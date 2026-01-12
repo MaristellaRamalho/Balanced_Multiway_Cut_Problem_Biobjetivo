@@ -1,5 +1,5 @@
 '''
-  Verifica os resultados obtidos 
+  Verifica os resultados obtidos -> Lê arquivo da instância, fronteira de Pareto e Statistics correspondentes -> confere os valores reportados para as funções objetivo, validade da solução e informações da instância. 
 '''
 
 import os
@@ -23,8 +23,7 @@ def ler_instancia(path):
     """
     Lê o arquivo .gr da pasta instances.
     """
-    # A verificação de existência agora é feita antes de chamar esta função,
-    # mas mantemos aqui por segurança.
+
     if not os.path.exists(path):
         return None
     
@@ -62,7 +61,8 @@ def ler_instancia(path):
 
     return grafo, terminais, n, m, k
 
-
+# Lê o arquivo de métricas gerais da instância (mostra número de nós, terminais e arestas ) e parâmetros do NSBRKGA
+#Transforma as linhas do arquivo em um dicionário chave-valor
 def ler_statistics(path):
     stats = {}
     if not os.path.exists(path):
@@ -76,6 +76,9 @@ def ler_statistics(path):
     return stats
 
 
+# Lê a fronteira de Pareto correspondete à instância (dada a seed corrente)
+# O arquivo contem as soluções encontradas (valores das funções objetivo) nas linhas iniciais. Nas linhas seguintes tem blocos com as componentes formadas em cada solução, iniciando cada um com "Componentes da Solução"
+
 def ler_pareto(path):
     if not os.path.exists(path):
         print(f"[ERRO] Arquivo pareto não encontrado: {path}")
@@ -84,8 +87,10 @@ def ler_pareto(path):
     with open(path, 'r', encoding='utf-8') as f:
         content = f.read()
 
+    #Separa os blocos com as componentes formadas em cada solução da fronteira
     blocks = content.split("Componentes da solução:")
     
+    #Linhas inicias guardam as soluções encontradas
     header_lines = blocks[0].strip().split('\n')
     expected_costs = []
     for line in header_lines:
@@ -107,8 +112,8 @@ def ler_pareto(path):
         for line in lines:
             line = line.strip()
             if "=" in line:
-                cid_str, nodes_str = line.split("=")
-                cid = int(cid_str.strip())
+                comp_str, nodes_str = line.split("=")
+                comp_id = int(comp_str.strip())
                 
                 nodes_clean = nodes_str.replace("{", "").replace("}", "").strip()
                 if nodes_clean:
@@ -116,7 +121,7 @@ def ler_pareto(path):
                 else:
                     nodes = [] 
                 
-                comp_dict[cid] = nodes
+                comp_dict[comp_id] = nodes
         
         if comp_dict:
             solutions_components.append(comp_dict)
@@ -125,16 +130,26 @@ def ler_pareto(path):
 
 def verificar_solucao(grafo, terminais, n, k, componentes):
     msg_erro = []
-    
-    # Verificar Terminais
-    for i in range(k):
-        term_esperado = terminais[i]
-        if i not in componentes:
-            msg_erro.append(f"Componente {i} inexistente")
-            continue
+
+    set_terminais = set(terminais)
+
+    for comp_id, nodes in componentes.items():
+        #Verifica se tem mais de um terminal na componente
+        qtd_terminais_componente = 0
+        for node in nodes:
+            if node in set_terminais:
+                qtd_terminais_componente += 1
         
-        if term_esperado not in componentes[i]:
-            msg_erro.append(f"Componente {i} não contém terminal {term_esperado}")
+        if qtd_terminais_componente > 1:
+            msg_erro.append(f"Componente {comp_id} inválida: possui {qtd_terminais_componente} terminais (permitido: 1)")
+        
+        if qtd_terminais_componente == 0:
+            msg_erro.append(f"Componente {comp_id} inválida: não possui nenhum terminal")
+        
+        #Verifica se a componente possui o terminal esperado (terminais atribuídos às componentes na ordem da lista na instância)
+        term_esperado = terminais[comp_id]
+        if term_esperado not in nodes:
+            msg_erro.append(f"Componente {comp_id} incorreta: deveria conter o terminal {term_esperado}")
         
     # Verificar partição
     todos_nos = []
@@ -146,27 +161,30 @@ def verificar_solucao(grafo, terminais, n, k, componentes):
     
     if len(todos_nos) != len(set(todos_nos)):
         msg_erro.append("Existem nós duplicados em componentes diferentes")
-
+    
     if msg_erro:
         return False, -1, -1, msg_erro
 
-    # Recalcular Custos
+
+    #Cada nó é marcado com o id de sua componente
     node_colors = [-1] * n
-    for cid, nodes in componentes.items():
+    for comp_id, nodes in componentes.items():
         for node in nodes:
             if node < n:
-                node_colors[node] = cid
+                node_colors[node] = comp_id
             else:
                 msg_erro.append(f"Nó {node} fora dos limites 0-{n-1}")
                 return False, -1, -1, msg_erro
 
+   
+    # Recalcular Custos
     cut_cost = 0.0
     for u in range(n):
         if u not in grafo: continue
         color_u = node_colors[u]
         for v, w in grafo[u]:
-            if u < v: 
-                color_v = node_colors[v]
+            if u < v: #Não soma o custo duas vezes -> Guarda o cutso de (1,5) e não de (5,1)
+                color_v = node_colors[v] #cor do vizinho
                 if color_u != color_v:
                     cut_cost += w
 
@@ -195,18 +213,17 @@ def main():
     for p_file in pareto_files:
         filename = os.path.basename(p_file) 
         
-        # --- FILTRO DE ARQUIVOS DE REFERÊNCIA ---
-        # Se o arquivo não tiver "_" ou parecer ser um arquivo de referência, pula
-        # Ajuste esta condição conforme o padrão dos seus arquivos de referência
-        # Exemplo: se o arquivo termina exatamente com _1.txt mas não tem o nome do algoritmo
+        # --- FILTRO DE ARQUIVOS DE FRONTEIRA DE PARETO DE REFERÊNCIA   E ARQUIVOS DE FRONTEIRA BEST E MEDIAN---
         parts_filname = filename.split("_")
         
         if len(parts_filname) == 4:
-             print(f"[INFO] Ignorando arquivo da fronteira de  referência: {filename}")
+             if DEBUG > 0:
+                print(f"[INFO] Ignorando arquivo da fronteira de Pareto de  referência: {filename}")
              continue
         
         if parts_filname[-1] == "best.txt" or parts_filname[-1] == "median.txt":
-            print(f"[INFO] Ignorando arquivo de best ou median {filename}")
+            if DEBUG > 0 :
+                print(f"[INFO] Ignorando arquivo de best ou median {filename}")
             continue
         
         has_error = False 
@@ -220,7 +237,6 @@ def main():
             if "_nsbrkga" in base_filename:
                 instance_name_raw = base_filename.split("_nsbrkga")[0]
             else:
-                # Lógica conservadora para arquivos sem tag do algoritmo
                 parts = base_filename.split("_")
                 if len(parts) > 1 and parts[-1].isdigit():
                     instance_name_raw = "_".join(parts[:-1])
@@ -232,10 +248,8 @@ def main():
             arquivos_com_erro.append(os.path.abspath(p_file))
             continue
 
-        # --- BUSCA INTELIGENTE POR SUFIXOS (_1, _2, _3) ---
         found_instance_path = None
         
-        # Lista de tentativas: nome exato, depois com _1, _2, _3
         suffixes_to_try = ["", "_1", "_2", "_3"]
         
         for suf in suffixes_to_try:
@@ -244,10 +258,9 @@ def main():
             
             if os.path.exists(caminho_teste):
                 found_instance_path = caminho_teste
-                break # Encontrou! Para o loop.
+                break # Encontrou para o loop.
         
         if not found_instance_path:
-            # Se saiu do loop sem encontrar nada
             print(f"   [ERRO CRÍTICO] Instância não encontrada (tentado sufixos _1 a _3): {instance_name_raw}*.gr")
             # Armazena CAMINHO COMPLETO no erro
             arquivos_com_erro.append(os.path.abspath(p_file))
@@ -259,11 +272,10 @@ def main():
             print(f"\n>> Processando: {filename}")
             print(f"   Instância detectada: {os.path.basename(found_instance_path)}")
 
-        # 1. Carregar Dados da Instância Encontrada
+        # Carrega Dados da Instância Encontrada
         inst_data = ler_instancia(found_instance_path)
         
         if not inst_data: 
-            # Caso raro onde exists retorna true mas leitura falha
             print(f"   [ERRO LEITURA] Falha ao ler instância: {found_instance_path}")
             arquivos_com_erro.append(os.path.abspath(p_file))
             continue
@@ -271,7 +283,7 @@ def main():
         grafo, terminais, n, m, k = inst_data
         stats_data = ler_statistics(stats_path)
         
-        # 2. Validar Estatísticas
+        # Validar dados do arquivo de statistics
         if stats_data:
             stats_n = int(stats_data.get("Number of vertices", -1))
             stats_k = int(stats_data.get("Number of terminals", -1))
@@ -281,7 +293,7 @@ def main():
                 print(f"   [ALERTA] Divergência Stats vs Instância. N({stats_n}vs{n}), K({stats_k}vs{k})")
                 has_error = True
 
-        # 3. Validar Soluções
+        # Valida Soluções
         exp_costs, solutions = ler_pareto(p_file)
         
         if len(exp_costs) != len(solutions):
@@ -344,7 +356,7 @@ def main():
     
     print("-" * 50)
     if len(arquivos_com_erro) > 0:
-        print(f"Foram encontrados erros em {len(arquivos_com_erro)} arquivos (Caminhos Completos):")
+        print(f"Foram encontrados erros em {len(arquivos_com_erro)} arquivos:")
         for arq in arquivos_com_erro:
             print(f" -> {arq}")
     else:
