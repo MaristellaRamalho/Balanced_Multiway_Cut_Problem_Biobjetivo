@@ -8,7 +8,7 @@ import math
 import numpy as np
 import glob
 
-ROOT_DIR = "/mnt/c/Users/maris/OneDrive/Documentos/bmcp_biobjetivo"
+ROOT_DIR = "."
 INSTANCES_DIR = os.path.join(ROOT_DIR, "instances")
 PARETO_DIR = os.path.join(ROOT_DIR, "pareto")
 STATS_DIR = os.path.join(ROOT_DIR, "statistics")
