@@ -1,3 +1,2 @@
-# motsp
-Multi-Objective Travelling Salesman Problem
-
+# bmcp
+Balanced Multiway Cut Problem - Biobjetivo
