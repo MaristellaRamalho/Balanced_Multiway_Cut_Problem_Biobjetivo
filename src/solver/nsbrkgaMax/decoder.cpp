@@ -1,4 +1,4 @@
-#include "solver/nsbrkga/decoder.hpp"
+#include "solver/nsbrkgaMax/decoder.hpp"
 #include <limits>
 #include <iostream>
 #include <algorithm>
@@ -133,16 +133,19 @@ namespace bmcp
         // recolore nós isolados e calcula valor do corte
         double discount_cut_cost = bfs_recolor_nodes(color_node, visited_node, chromosome, components_size);
 
-        //Objetivo 1
-        double custo_corte = (naturally_cut_cost - discount_cut_cost);
+        //Objetivo 1 - corte normalizado pela soma dos custos das arestas
+        double custo_corte = (naturally_cut_cost - discount_cut_cost)/ (double) (instance.cumulative_edge_cost);
 
-        //Objetivo 2
+        //Objetivo 2 - balanceamento baseado em penalidade do tipo Max -> normalizado por gd_max
         int balanceamentoPerfeito = ceil((instance.num_nodes / (double)instance.num_terminals));
         int maxV = *std::max_element(components_size.begin(), components_size.end()); // maior num de vértices em uma componente
 
+        double gd = maxV - balanceamentoPerfeito;
+        double gd_max = instance.num_nodes - (instance.num_terminals - 1) - balanceamentoPerfeito;
+
         std::vector<double> costs(instance.num_objectives, -1);
         costs[0] = custo_corte;
-        costs[1] = maxV / (double) balanceamentoPerfeito;
+        costs[1] = gd / gd_max;
 
         return costs;
     }

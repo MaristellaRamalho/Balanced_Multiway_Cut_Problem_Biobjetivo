@@ -1,7 +1,7 @@
 #pragma once
 
 #include "solver/solver.hpp"
-#include "solver/nsbrkga/decoder.hpp"
+#include "solver/nsbrkgaMax/decoder.hpp"
 
 namespace bmcp {
 /*************************************************************

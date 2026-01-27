@@ -1,44 +1,16 @@
 #!/bin/bash
 
 instances=(
-N160_M2N_K10_1 N160_M2N_K10_2 N160_M2N_K10_3
-N160_M2N_K20_1 N160_M2N_K20_2 N160_M2N_K20_3
-N160_M2N_K40_1 N160_M2N_K40_2 N160_M2N_K40_3
-N160_M4N_K10_1 N160_M4N_K10_2 N160_M4N_K10_3
-N160_M4N_K20_1 N160_M4N_K20_2 N160_M4N_K20_3
-N160_M4N_K40_1 N160_M4N_K40_2 N160_M4N_K40_3
-N160_M8N_K10_1 N160_M8N_K10_2 N160_M8N_K10_3
-N160_M8N_K20_1 N160_M8N_K20_2 N160_M8N_K20_3
-N160_M8N_K40_1 N160_M8N_K40_2 N160_M8N_K40_3
-
-N320_M2N_K20_1 N320_M2N_K20_2 N320_M2N_K20_3
-N320_M2N_K40_1 N320_M2N_K40_2 N320_M2N_K40_3
-N320_M2N_K80_1 N320_M2N_K80_2 N320_M2N_K80_3
-N320_M4N_K20_1 N320_M4N_K20_2 N320_M4N_K20_3
-N320_M4N_K40_1 N320_M4N_K40_2 N320_M4N_K40_3
-N320_M4N_K80_1 N320_M4N_K80_2 N320_M4N_K80_3
-N320_M8N_K20_1 N320_M8N_K20_2 N320_M8N_K20_3
-N320_M8N_K40_1 N320_M8N_K40_2 N320_M8N_K40_3
-N320_M8N_K80_1 N320_M8N_K80_2 N320_M8N_K80_3
-
-N640_M2N_K40_1 N640_M2N_K40_2 N640_M2N_K40_3
-N640_M2N_K80_1 N640_M2N_K80_2 N640_M2N_K80_3
-N640_M2N_K160_1 N640_M2N_K160_2 N640_M2N_K160_3
-N640_M4N_K40_1 N640_M4N_K40_2 N640_M4N_K40_3
-N640_M4N_K80_1 N640_M4N_K80_2 N640_M4N_K80_3
-N640_M4N_K160_1 N640_M4N_K160_2 N640_M4N_K160_3
-N640_M8N_K40_1 N640_M8N_K40_2 N640_M8N_K40_3
-N640_M8N_K80_1 N640_M8N_K80_2 N640_M8N_K80_3
-N640_M8N_K160_1 N640_M8N_K160_2 N640_M8N_K160_3
+N160_M4N_K20_1 N160_M8N_K40_1 N320_M8N_K40_1 N320_M8N_K80_1 N640_M8N_K40_1 N640_M8N_K80_1
 )
 
-solvers=(nsbrkga)
+solvers=(nsbrkgaMax)
 seeds=(1089661 1602347 1644410)
 versions=(best median)
 
 num_processes=5
 
-time_limit=1024
+time_limit=32
 max_num_solutions=500
 max_num_snapshots=30
 max_ref_solutions=800
@@ -99,7 +71,7 @@ do
             then
                 command+="--memory "
             fi
-            if [ $solver = "nsbrkga" ]
+            if [[ "$solver" == nsbrkga* ]]
             then
                 command+="--num-elites-snapshots ${path}/num_elites_snapshots/${instance}_${solver}_${seed}.txt "
             fi
@@ -132,38 +104,10 @@ eval $final_command
 wait
 
 instances=(
-N160_M2N_K10_1 N160_M2N_K10_2 N160_M2N_K10_3
-N160_M2N_K20_1 N160_M2N_K20_2 N160_M2N_K20_3
-N160_M2N_K40_1 N160_M2N_K40_2 N160_M2N_K40_3
-N160_M4N_K10_1 N160_M4N_K10_2 N160_M4N_K10_3
-N160_M4N_K20_1 N160_M4N_K20_2 N160_M4N_K20_3
-N160_M4N_K40_1 N160_M4N_K40_2 N160_M4N_K40_3
-N160_M8N_K10_1 N160_M8N_K10_2 N160_M8N_K10_3
-N160_M8N_K20_1 N160_M8N_K20_2 N160_M8N_K20_3
-N160_M8N_K40_1 N160_M8N_K40_2 N160_M8N_K40_3
-
-N320_M2N_K20_1 N320_M2N_K20_2 N320_M2N_K20_3
-N320_M2N_K40_1 N320_M2N_K40_2 N320_M2N_K40_3
-N320_M2N_K80_1 N320_M2N_K80_2 N320_M2N_K80_3
-N320_M4N_K20_1 N320_M4N_K20_2 N320_M4N_K20_3
-N320_M4N_K40_1 N320_M4N_K40_2 N320_M4N_K40_3
-N320_M4N_K80_1 N320_M4N_K80_2 N320_M4N_K80_3
-N320_M8N_K20_1 N320_M8N_K20_2 N320_M8N_K20_3
-N320_M8N_K40_1 N320_M8N_K40_2 N320_M8N_K40_3
-N320_M8N_K80_1 N320_M8N_K80_2 N320_M8N_K80_3
-
-N640_M2N_K40_1 N640_M2N_K40_2 N640_M2N_K40_3
-N640_M2N_K80_1 N640_M2N_K80_2 N640_M2N_K80_3
-N640_M2N_K160_1 N640_M2N_K160_2 N640_M2N_K160_3
-N640_M4N_K40_1 N640_M4N_K40_2 N640_M4N_K40_3
-N640_M4N_K80_1 N640_M4N_K80_2 N640_M4N_K80_3
-N640_M4N_K160_1 N640_M4N_K160_2 N640_M4N_K160_3
-N640_M8N_K40_1 N640_M8N_K40_2 N640_M8N_K40_3
-N640_M8N_K80_1 N640_M8N_K80_2 N640_M8N_K80_3
-N640_M8N_K160_1 N640_M8N_K160_2 N640_M8N_K160_3
+N160_M4N_K20_1 N160_M8N_K40_1 N320_M8N_K40_1 N320_M8N_K80_1 N640_M8N_K40_1 N640_M8N_K80_1
 )
 
-solvers=(nsbrkga)
+solvers=(nsbrkgaMax)
 
 commands=()
 
@@ -185,7 +129,7 @@ do
         for seed in ${seeds[@]}
         do
             command+="--pareto-${j} ${path}/pareto/${instance}_${solver}_${seed}.txt "
-            command+="--best-solutions-snapshots-${j} ${path}/best_solutions_snapshots/${instance}_${solver}_${seed}_ "
+            #command+="--best-solutions-snapshots-${j} ${path}/best_solutions_snapshots/${instance}_${solver}_${seed}_ "
             command+="--reference-pareto ${path}/pareto/${instance}.txt "
             j=$((j+1))
         done
@@ -236,9 +180,9 @@ do
         for seed in ${seeds[@]}
         do
             command+="--pareto-${j} ${path}/pareto/${instance}_${solver}_${seed}.txt "
-            command+="--best-solutions-snapshots-${j} ${path}/best_solutions_snapshots/${instance}_${solver}_${seed}_ "
+            #command+="--best-solutions-snapshots-${j} ${path}/best_solutions_snapshots/${instance}_${solver}_${seed}_ "
             command+="--hypervolume-${j} ${path}/hypervolume/${instance}_${solver}_${seed}.txt "
-            command+="--hypervolume-snapshots-${j} ${path}/hypervolume_snapshots/${instance}_${solver}_${seed}.txt "
+            #command+="--hypervolume-snapshots-${j} ${path}/hypervolume_snapshots/${instance}_${solver}_${seed}.txt "
             j=$((j+1))
         done
     done
@@ -288,17 +232,17 @@ do
         command+="--statistics-median ${path}/statistics/${instance}_${solver}_median.txt "
         command+="--pareto-best ${path}/pareto/${instance}_${solver}_best.txt "
         command+="--pareto-median ${path}/pareto/${instance}_${solver}_median.txt "
-        command+="--hypervolume-snapshots-best ${path}/hypervolume_snapshots/${instance}_${solver}_best.txt "
-        command+="--hypervolume-snapshots-median ${path}/hypervolume_snapshots/${instance}_${solver}_median.txt "
-        command+="--best-solutions-snapshots-best ${path}/best_solutions_snapshots/${instance}_${solver}_best_ "
-        command+="--best-solutions-snapshots-median ${path}/best_solutions_snapshots/${instance}_${solver}_median_ "
+        #command+="--hypervolume-snapshots-best ${path}/hypervolume_snapshots/${instance}_${solver}_best.txt "
+        #command+="--hypervolume-snapshots-median ${path}/hypervolume_snapshots/${instance}_${solver}_median.txt "
+        #command+="--best-solutions-snapshots-best ${path}/best_solutions_snapshots/${instance}_${solver}_best_ "
+        #command+="--best-solutions-snapshots-median ${path}/best_solutions_snapshots/${instance}_${solver}_median_ "
         command+="--num-non-dominated-snapshots-best ${path}/num_non_dominated_snapshots/${instance}_${solver}_best.txt "
         command+="--num-non-dominated-snapshots-median ${path}/num_non_dominated_snapshots/${instance}_${solver}_median.txt "
         command+="--populations-snapshots-best ${path}/populations_snapshots/${instance}_${solver}_best_ "
         command+="--populations-snapshots-median ${path}/populations_snapshots/${instance}_${solver}_median_ "
         command+="--num-fronts-snapshots-best ${path}/num_fronts_snapshots/${instance}_${solver}_best.txt "
         command+="--num-fronts-snapshots-median ${path}/num_fronts_snapshots/${instance}_${solver}_median.txt "
-        if [ $solver = "nsbrkga" ]
+        if [[ "$solver" == nsbrkga* ]]
         then
             command+="--num-elites-snapshots-best ${path}/num_elites_snapshots/${instance}_${solver}_best.txt "
             command+="--num-elites-snapshots-median ${path}/num_elites_snapshots/${instance}_${solver}_median.txt "
@@ -309,12 +253,12 @@ do
             command+="--statistics-${j} ${path}/statistics/${instance}_${solver}_${seed}.txt "
             command+="--pareto-${j} ${path}/pareto/${instance}_${solver}_${seed}.txt "
             command+="--hypervolume-${j} ${path}/hypervolume/${instance}_${solver}_${seed}.txt "
-            command+="--hypervolume-snapshots-${j} ${path}/hypervolume_snapshots/${instance}_${solver}_${seed}.txt "
-            command+="--best-solutions-snapshots-${j} ${path}/best_solutions_snapshots/${instance}_${solver}_${seed}_ "
+            #command+="--hypervolume-snapshots-${j} ${path}/hypervolume_snapshots/${instance}_${solver}_${seed}.txt "
+            #command+="--best-solutions-snapshots-${j} ${path}/best_solutions_snapshots/${instance}_${solver}_${seed}_ "
             command+="--num-non-dominated-snapshots-${j} ${path}/num_non_dominated_snapshots/${instance}_${solver}_${seed}.txt "
             command+="--populations-snapshots-${j} ${path}/populations_snapshots/${instance}_${solver}_${seed}_ "
             command+="--num-fronts-snapshots-${j} ${path}/num_fronts_snapshots/${instance}_${solver}_${seed}.txt "
-            if [ $solver = "nsbrkga" ]
+            if [[ "$solver" == nsbrkga* ]]
             then
                 command+="--num-elites-snapshots-${j} ${path}/num_elites_snapshots/${instance}_${solver}_${seed}.txt "
             fi

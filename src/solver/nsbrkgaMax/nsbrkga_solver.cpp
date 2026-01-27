@@ -1,4 +1,4 @@
-#include "solver/nsbrkga/nsbrkga_solver.hpp"
+#include "solver/nsbrkgaMax/nsbrkga_solver.hpp"
 #include "instance/instance.hpp"
 
 namespace bmcp {
