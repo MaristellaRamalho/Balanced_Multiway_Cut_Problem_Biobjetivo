@@ -314,6 +314,20 @@ $(BIN)/exec/nsbrkgaMax_solver_exec : $(BIN)/instance/instance.o \
 
 nsbrkgaMax_solver_exec : $(BIN)/exec/nsbrkgaMax_solver_exec
 
+
+$(BIN)/exec/nsbrkgaQuad_solver_exec : $(BIN)/instance/instance.o \
+                                  $(BIN)/solution/solution.o \
+                                  $(BIN)/solver/solver.o \
+                                  $(BIN)/solver/nsbrkgaQuad/decoder.o \
+                                  $(BIN)/solver/nsbrkgaQuad/nsbrkga_solver.o \
+                                  $(BIN)/utils/argument_parser.o \
+                                  $(BIN)/exec/nsbrkgaQuad_solver_exec.o
+	@echo "--> Linking objects..."
+	$(CPP) -o $@ $^ $(CARGS) $(INC)
+	@echo
+
+nsbrkgaQuad_solver_exec : $(BIN)/exec/nsbrkgaQuad_solver_exec
+
 $(BIN)/test/statistics_test : $(BIN)/utils/statistics.o \
                               $(BIN)/test/statistics_test.o
 	@echo "--> Linking objects..."
