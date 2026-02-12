@@ -233,7 +233,6 @@ i=0
 
 for instance in ${instances[@]}
 do
-    last_hv_check="${path}/hypervolume/${instance}_${solvers[-1]}_${seeds[-1]}.txt"
 
     command="${path}/bin/exec/hypervolume_calculator_exec "
     command+="--instance ${path}/instances/${instance}.gr "
