@@ -32,13 +32,13 @@ N640_M8N_K80_1 N640_M8N_K80_2 N640_M8N_K80_3
 N640_M8N_K160_1 N640_M8N_K160_2 N640_M8N_K160_3
 )
 
-solvers=(nsbrkgaMax nsbrkgaQuad)
+solvers=(nsbrkgaColoracaoMax nsbrkgaColoracaoQuad)
 seeds=(1089661 1602347 1644410)
 versions=(best median)
 
 num_processes=5
 
-time_limit=1
+time_limit=2048
 max_num_solutions=500
 max_num_snapshots=30
 max_ref_solutions=800
@@ -167,7 +167,7 @@ N640_M8N_K80_1 N640_M8N_K80_2 N640_M8N_K80_3
 N640_M8N_K160_1 N640_M8N_K160_2 N640_M8N_K160_3
 )
 
-solvers=(nsbrkgaMax nsbrkgaQuad)
+solvers=(nsbrkgaColoracaoMax nsbrkgaColoracaoQuad)
 
 commands=()
 
@@ -181,7 +181,6 @@ i=0
 for instance in ${instances[@]}
 do
     output_ref="${path}/pareto/${instance}.txt"
-    if [ -f "$output_ref" ]; then continue; fi
 
     command="${path}/bin/exec/reference_pareto_front_calculator_exec "
     command+="--instance ${path}/instances/${instance}.gr "
@@ -235,7 +234,6 @@ i=0
 for instance in ${instances[@]}
 do
     last_hv_check="${path}/hypervolume/${instance}_${solvers[-1]}_${seeds[-1]}.txt"
-    if [ -f "$last_hv_check" ]; then continue; fi
 
     command="${path}/bin/exec/hypervolume_calculator_exec "
     command+="--instance ${path}/instances/${instance}.gr "
@@ -291,8 +289,6 @@ for instance in ${instances[@]}
 do
     for solver in ${solvers[@]}
     do
-
-        if [ -f "${path}/hypervolume/${instance}_${solver}_stats.txt" ]; then continue; fi
 
         command="${path}/bin/exec/results_aggregator_exec "
         command+="--hypervolumes ${path}/hypervolume/${instance}_${solver}.txt "
