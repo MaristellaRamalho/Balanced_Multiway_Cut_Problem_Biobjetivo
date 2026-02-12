@@ -1,13 +1,14 @@
 import pandas as pd
 import os
 
-# VARIÁVEIS DE CONFIGURAÇÃO 
+#VARIÁVEIS DE CONFIGURAÇÃO
 BASE_DIR = 'TESTES_NSBRKGA_MAX_E_QUAD_2048s'
 PATH_PARETO = os.path.join(BASE_DIR, 'pareto')
 PATH_STATISTICS = os.path.join(BASE_DIR, 'statistics')
 
 tempo = "2048s"
-NOME_SAIDA = f'Resultados_NSBRKGA_{tempo}.xlsx'
+NOME_SAIDA = f'Resultados_NSBRKGA_Coloracao{tempo}.xlsx'
+
 
 instancias_base = [
     "N160_M2N_K10_1", "N160_M2N_K10_2", "N160_M2N_K10_3",
@@ -39,10 +40,11 @@ instancias_base = [
     "N640_M8N_K80_1", "N640_M8N_K80_2", "N640_M8N_K80_3"
 ]
 
-metodos = ["nsbrkgaMax", "nsbrkgaQuad"]
+metodos = ["nsbrkgaColoracaoMax", "nsbrkgaColoracaoQuad"]
 seeds = ["1089661", "1602347", "1644410"]
 
 def format_brazilian(val):
+    """Aplica 4 casas decimais e troca ponto por vírgula para o Google Sheets."""
     if val is None or val == "": return ""
     try:
         return f"{float(val):.4f}".replace('.', ',')
@@ -54,6 +56,7 @@ def processar():
     
     for metodo in metodos:
         rows = []
+        # Nome das abas como metodo_tempo
         nome_aba = f"{metodo}_{tempo}"
         print(f"Processando: {nome_aba}...")
         
@@ -61,7 +64,7 @@ def processar():
             for seed in seeds:
                 file_name = f"{inst}_{metodo}_{seed}.txt"
                 
-                # Pareto 
+               
                 path_p = os.path.join(PATH_PARETO, file_name)
                 cost_min, bal_rel, cost_rel, bal_min, total_sols = None, None, None, None, 0
                 
@@ -69,20 +72,29 @@ def processar():
                     solutions = []
                     with open(path_p, 'r') as f:
                         for line in f:
-                            if "Componentes" in line: break
+                            # Ignora linhas de componentes e separadores
+                            if "Componentes" in line or "=" in line: break
                             parts = line.split()
                             if len(parts) >= 2:
                                 try:
                                     solutions.append((float(parts[0]), float(parts[1])))
                                 except ValueError: continue
+                    
                     if solutions:
                         total_sols = len(solutions)
-                        s_c_min = min(solutions, key=lambda x: x[0])
-                        cost_min, bal_rel = s_c_min[0], s_c_min[1]
-                        s_b_min = min(solutions, key=lambda x: x[1])
-                        cost_rel, bal_min = s_b_min[0], s_b_min[1]
+                        
+                        
+                        # Menor Custo e menor Bal correspondente
+                        # Ordena por custo (asc) e depois por balanceamento (asc)
+                        sol_by_cost = sorted(solutions, key=lambda x: (x[0], x[1]))
+                        cost_min, bal_rel = sol_by_cost[0][0], sol_by_cost[0][1]
+                        
+                        # Menor Balanceamento e menor Custo correspondente
+                        # Ordena por balanceamento (asc) e depois por custo (asc)
+                        sol_by_bal = sorted(solutions, key=lambda x: (x[1], x[0]))
+                        cost_rel, bal_min = sol_by_bal[0][0], sol_by_bal[0][1]
                 
-                # Statistics 
+                # --- Leitura do arquivo Statistics ---
                 path_s = os.path.join(PATH_STATISTICS, file_name)
                 last_gen, n_iters, solving_time, seed_val = "", "", "", ""
                 nodes, edges, terminals = "", "", ""
@@ -98,6 +110,7 @@ def processar():
                             elif "Solving time" in line: solving_time = format_brazilian(line.split()[-1])
                             elif "Seed" in line: seed_val = line.split()[-1]
 
+                # Montagem da linha conforme estrutura solicitada
                 rows.append({
                     "metodo": metodo,
                     "instancia": inst,
@@ -115,10 +128,12 @@ def processar():
                     "Seed": seed_val
                 })
         
-        pd.DataFrame(rows).to_excel(writer, sheet_name=nome_aba, index=False)
+        # Cria o DataFrame e salva na aba correspondente
+        df = pd.DataFrame(rows)
+        df.to_excel(writer, sheet_name=nome_aba, index=False)
     
     writer.close()
-    print(f"\nRelatório gerado com sucesso: {NOME_SAIDA}")
+    print(f"\nSucesso! Relatório gerado: {NOME_SAIDA}")
 
 if __name__ == "__main__":
     processar()
