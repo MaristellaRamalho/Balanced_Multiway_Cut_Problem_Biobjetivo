@@ -315,18 +315,18 @@ $(BIN)/exec/nsbrkgaColoracaoMax_solver_exec : $(BIN)/instance/instance.o \
 nsbrkgaColoracaoMax_solver_exec : $(BIN)/exec/nsbrkgaColoracaoMax_solver_exec
 
 
-$(BIN)/exec/nsbrkgaQuad_solver_exec : $(BIN)/instance/instance.o \
+$(BIN)/exec/nsbrkgaColoracaoQuad_solver_exec : $(BIN)/instance/instance.o \
                                   $(BIN)/solution/solution.o \
                                   $(BIN)/solver/solver.o \
-                                  $(BIN)/solver/nsbrkgaQuad/decoder.o \
-                                  $(BIN)/solver/nsbrkgaQuad/nsbrkga_solver.o \
+                                  $(BIN)/solver/nsbrkgaColoracaoQuad/Decoder_Coloracao3_Quad.o \
+                                  $(BIN)/solver/nsbrkgaColoracaoQuad/nsbrkga_solver.o \
                                   $(BIN)/utils/argument_parser.o \
-                                  $(BIN)/exec/nsbrkgaQuad_solver_exec.o
+                                  $(BIN)/exec/nsbrkgaColoracaoQuad_solver_exec.o
 	@echo "--> Linking objects..."
 	$(CPP) -o $@ $^ $(CARGS) $(INC)
 	@echo
 
-nsbrkgaQuad_solver_exec : $(BIN)/exec/nsbrkgaQuad_solver_exec
+nsbrkgaColoracaoQuad_solver_exec : $(BIN)/exec/nsbrkgaColoracaoQuad_solver_exec
 
 $(BIN)/test/statistics_test : $(BIN)/utils/statistics.o \
                               $(BIN)/test/statistics_test.o

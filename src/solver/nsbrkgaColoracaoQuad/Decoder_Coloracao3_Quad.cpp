@@ -1,4 +1,4 @@
-#include "solver/nsbrkgaQuad/decoder.hpp"
+#include "solver/nsbrkgaColoracaoQuad/Decoder_Coloracao3_Quad.hpp"
 #include <limits>
 #include <iostream>
 #include <algorithm>
@@ -12,7 +12,7 @@
 namespace bmcp
 {
 
-    Decoder::Decoder(const Instance &instance) : instance(instance), init_adjacency_list(instance.num_nodes, -1), position_edge_vector(instance.num_edges * 2, -1)
+    Decoder_Coloracao3_Quad::Decoder_Coloracao3_Quad(const Instance &instance) : instance(instance), init_adjacency_list(instance.num_nodes, -1), position_edge_vector(instance.num_edges * 2, -1)
     {
         unsigned list_position = 0;
         unsigned edge_position = 0;
@@ -43,7 +43,7 @@ namespace bmcp
     }
 
 
-    Solution Decoder::decode_to_solution(const std::vector<double>& chromosome)  {
+    Solution Decoder_Coloracao3_Quad::decode_to_solution(const std::vector<double>& chromosome)  {
 
         //cópia local do cromossomo 
         NSBRKGA::Chromosome local_chrom = chromosome;
@@ -102,7 +102,7 @@ namespace bmcp
     }
 
 
-    std::vector<double> Decoder::decode(NSBRKGA::Chromosome &chromosome, bool)
+    std::vector<double> Decoder_Coloracao3_Quad::decode(NSBRKGA::Chromosome &chromosome, bool)
     {
 
         /// Armazena a cor de cada nó
@@ -160,7 +160,7 @@ namespace bmcp
 
     //-----------------------------[ Calcula nós que podem ser visitados ]--------------------------------//
 
-double Decoder::bfs_visited_nodes(
+double Decoder_Coloracao3_Quad::bfs_visited_nodes(
     std::vector<int> &color_node,
     std::vector<bool> &visited_node,
     std::vector<unsigned> &components_size)
@@ -230,7 +230,7 @@ double Decoder::bfs_visited_nodes(
 
 //-----------------------------[ Recolore nós ]--------------------------------//
 
-double Decoder::bfs_recolor_nodes(
+double Decoder_Coloracao3_Quad::bfs_recolor_nodes(
     std::vector<int> &color_node,
     std::vector<bool> &naturally_visited_node,
     NSBRKGA::Chromosome &chromosome,
