@@ -1,7 +1,7 @@
 #pragma once
 
 #include "solver/solver.hpp"
-#include "solver/nsbrkgaMax/decoder.hpp"
+#include "solver/nsbrkgaColoracaoMax/Decoder_Coloracao3_Max.hpp"
 
 namespace bmcp {
 /*************************************************************
@@ -222,7 +222,7 @@ class NSBRKGA_Solver : public Solver {
      *
      * @param pop the current population.
      *******************************************************************/
-    void capture_snapshot(const NSBRKGA::NSBRKGA<Decoder> & algorithm);
+    void capture_snapshot(const NSBRKGA::NSBRKGA<Decoder_Coloracao3_Max> & algorithm);
 
     /**********************
      * Solve the instance.

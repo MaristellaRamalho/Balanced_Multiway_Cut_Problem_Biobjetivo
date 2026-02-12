@@ -1,7 +1,7 @@
 #include "utils/argument_parser.hpp"
 // #include "solver/weighted_sum/christofides/christofides_solver.hpp"
 // #include "solver/weighted_sum/branch_and_cut/branch_and_cut_solver.hpp"
-#include "solver/nsbrkgaMax/nsbrkga_solver.hpp"
+#include "solver/nsbrkgaColoracaoMax/nsbrkga_solver.hpp"
 
 int main(int argc, char *argv[])
 {

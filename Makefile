@@ -301,18 +301,18 @@ $(BIN)/test/nsbrkga_solver_test : $(BIN)/instance/instance.o \
 
 nsbrkga_solver_test : $(BIN)/test/nsbrkga_solver_test
 
-$(BIN)/exec/nsbrkgaMax_solver_exec : $(BIN)/instance/instance.o \
+$(BIN)/exec/nsbrkgaColoracaoMax_solver_exec : $(BIN)/instance/instance.o \
                                   $(BIN)/solution/solution.o \
                                   $(BIN)/solver/solver.o \
-                                  $(BIN)/solver/nsbrkgaMax/decoder.o \
-                                  $(BIN)/solver/nsbrkgaMax/nsbrkga_solver.o \
+                                  $(BIN)/solver/nsbrkgaColoracaoMax/Decoder_Coloracao3_Max.o \
+                                  $(BIN)/solver/nsbrkgaColoracaoMax/nsbrkga_solver.o \
                                   $(BIN)/utils/argument_parser.o \
-                                  $(BIN)/exec/nsbrkgaMax_solver_exec.o
+                                  $(BIN)/exec/nsbrkgaColoracaoMax_solver_exec.o
 	@echo "--> Linking objects..."
 	$(CPP) -o $@ $^ $(CARGS) $(INC)
 	@echo
 
-nsbrkgaMax_solver_exec : $(BIN)/exec/nsbrkgaMax_solver_exec
+nsbrkgaColoracaoMax_solver_exec : $(BIN)/exec/nsbrkgaColoracaoMax_solver_exec
 
 
 $(BIN)/exec/nsbrkgaQuad_solver_exec : $(BIN)/instance/instance.o \

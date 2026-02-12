@@ -7,7 +7,7 @@
 
 namespace bmcp {
 
-class Decoder {
+class Decoder_Coloracao3_Max {
     public:
 
      /// Auxiliary edge structure
@@ -22,7 +22,7 @@ class Decoder {
     std::vector<unsigned> position_edge_vector;
 
 
-    Decoder(const Instance & instance);
+    Decoder_Coloracao3_Max(const Instance & instance);
 
     // Retorna custos para o NSBRKGA
     std::vector<double> decode(NSBRKGA::Chromosome & chromosome, bool rewrite);
