@@ -341,6 +341,20 @@ $(BIN)/exec/nsbrkgaKruskalMax_solver_exec : $(BIN)/instance/instance.o \
 
 nsbrkgaKruskalMax_solver_exec : $(BIN)/exec/nsbrkgaKruskalMax_solver_exec
 
+
+$(BIN)/exec/nsbrkgaKruskalQuad_solver_exec : $(BIN)/instance/instance.o \
+                                  $(BIN)/solution/solution.o \
+                                  $(BIN)/solver/solver.o \
+                                  $(BIN)/solver/nsbrkgaKruskalQuad/Decoder_KruskalPert_Quad.o \
+                                  $(BIN)/solver/nsbrkgaKruskalQuad/nsbrkga_solver.o \
+                                  $(BIN)/utils/argument_parser.o \
+                                  $(BIN)/exec/nsbrkgaColoracaoQuad_solver_exec.o
+	@echo "--> Linking objects..."
+	$(CPP) -o $@ $^ $(CARGS) $(INC)
+	@echo
+
+nsbrkgaKruskalQuad_solver_exec : $(BIN)/exec/nsbrkgaKruskalQuad_solver_exec
+
 $(BIN)/test/statistics_test : $(BIN)/utils/statistics.o \
                               $(BIN)/test/statistics_test.o
 	@echo "--> Linking objects..."
