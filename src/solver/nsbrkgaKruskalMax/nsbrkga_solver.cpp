@@ -89,7 +89,7 @@ void NSBRKGA_Solver::solve() {
     NSBRKGA::NSBRKGA algorithm(decoder_KruskalPert_Max,
                              this->instance.senses,
                              this->seed,
-                             this->instance.num_nodes,
+                             this->instance.num_edges,
                              params,
                              this->num_threads);
 
