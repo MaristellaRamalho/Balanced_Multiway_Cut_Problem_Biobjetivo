@@ -8,7 +8,9 @@
 #include <map>
 #include <cmath>
 
-namespace bmcp
+#define DEBUG 0
+
+    namespace bmcp
 {
 
     Decoder_KruskalPert_Quad::Decoder_KruskalPert_Quad(const Instance &instance) : instance(instance), list_edges(instance.num_edges)
@@ -97,22 +99,26 @@ namespace bmcp
             if (cu != cv)
             {
                 if (terminal[cu] == -1 || terminal[cv] == -1)
+                {
                     // union atualiza components_size
                     union_elements(component, terminal, rank, components_size, u, v);
+                }
                 else
+                {
                     // uses the original cost
                     custo_corte += cost;
+                }
             }
         }
 
         ////// Econtrando as componentes formadas
 
         // Usando map porque usamos o nome do terminal, que pode exceder o numero de terminais (Ex: terminais podem ser : 112 81 52 110 40 59 107 62 146 42)
-        std::map<int,std::vector<unsigned>> componentes;
+        std::map<int, std::vector<unsigned>> componentes;
 
         // Percorre os nós do grafo encontando o termninal representante e então insere o vértice na componente desse terminal
         //  componentes[112] = {1, 5 75, 112, ...}
-        
+
         for (unsigned v = 0; v < instance.num_nodes; v++)
         {
             componentes[terminal[find_element(component, v)]].push_back(v);
@@ -120,8 +126,9 @@ namespace bmcp
 
         // Armazena as componentes da solução -> mapeando set para vector
         std::vector<std::vector<unsigned>> componentes_solucao;
-       
-        for(unsigned t : instance.terminals){
+
+        for (unsigned t : instance.terminals)
+        {
             componentes_solucao.push_back(componentes[t]);
         }
 
@@ -136,10 +143,23 @@ namespace bmcp
 
         costs[1] = maxV / (double)balanceamentoPerfeito;
 
+        if (DEBUG == 1)
+        {
+            std::cout << "balanceamentoPerfeito: " << balanceamentoPerfeito << "\n";
+            std::cout << "maxV: " << maxV << "\n";
+            std::cout << "custo_corte: " << custo_corte << "\n";
+            std::cout << "Components_size: " << "\n";
+
+            for (auto cs : components_size)
+                if (cs != 0)
+                    std::cout << cs << ",";
+            std::cout << "\n";
+        }
+
         return Solution(instance, componentes_solucao, costs);
     }
 
-    std::vector<double> Decoder_KruskalPert_Quad::decode(NSBRKGA::Chromosome &chromosome, bool)
+    std::vector<double> Decoder_KruskalPert_Quad::decode(NSBRKGA::Chromosome & chromosome, bool)
     {
 
         /// edges cuted
@@ -190,6 +210,7 @@ namespace bmcp
         /// Traverses the edge vector by adding the edges that
         /// do not join components with different terminals.
         /// In the opposite case, the edge is added to the cut.
+
         for (unsigned i = 0; i < instance.num_edges; i++)
         {
             u = edges[i].src;
@@ -202,24 +223,33 @@ namespace bmcp
             if (cu != cv)
             {
                 if (terminal[cu] == -1 || terminal[cv] == -1)
+                {
                     // union atualiza components_size
                     union_elements(component, terminal, rank, components_size, u, v);
+                }
                 else
+                {
                     // uses the original cost
                     custo_corte += cost;
+                    if (DEBUG == 2)
+                    {
+                        std::cout << "custo aresta corte ( " << u << "," << v << ") : " << cost << "\n";
+                    }
+                }
             }
         }
 
-        //Objetivo 2 - balanceamento baseado na penalidade Quadrange -> normalizado por gd_max
+        // Objetivo 2 - balanceamento baseado na penalidade Quadrange -> normalizado por gd_max
         int balanceamentoPerfeito = ceil((instance.num_nodes / (double)instance.num_terminals));
         int maxV = *std::max_element(components_size.begin(), components_size.end()); // maior num de vértices em uma componente
 
         double gd = 0;
 
-        //percorre as componentes
-        for(int i = 0; i < instance.num_terminals; i++){
+        // percorre as componentes
+        for (int i = 0; i < components_size.size(); i++)
+        {
             int diferenca = std::max(0, (int)components_size[i] - balanceamentoPerfeito);
-            gd += pow(diferenca, 2);  
+            gd += pow(diferenca, 2);
         }
 
         double gd_max = instance.num_nodes - (instance.num_terminals - 1) - balanceamentoPerfeito;
@@ -227,8 +257,28 @@ namespace bmcp
         std::vector<double> costs(instance.num_objectives, -1);
 
         // Objetivo 1 - corte normalizado pela soma dos custos das arestas
-        costs[0] = custo_corte / (double)(instance.cumulative_edge_cost);
+        costs[0] = custo_corte / (double)instance.cumulative_edge_cost;
         costs[1] = sqrt(gd) / gd_max;
+
+        if (DEBUG == 3)
+        {
+            std::cout << "tam_crom: " << chromosome.size() << "\n";
+            std::cout << "# arestas : " << instance.num_edges << "\n";
+            std::cout << "custo_corte kruskalPertMax: " << custo_corte << "\n\n";
+
+            std::cout << "balanceamentoPerfeito: " << balanceamentoPerfeito << "\n";
+            std::cout << "maxV: " << maxV << "\n";
+            std::cout << "gd: " << gd << "\n";
+            std::cout << "gd_max: " << gd_max << "\n";
+            std::cout << "instance.cumulative_edge_cost: " << instance.cumulative_edge_cost << "\n";
+
+            std::cout << "Components_size: " << "\n";
+
+            for (auto cs : components_size)
+                if (cs != 0)
+                    std::cout << cs << ",";
+            std::cout << "\n";
+        }
 
         return costs;
     }
@@ -237,7 +287,7 @@ namespace bmcp
 
     // Union retorna um vetor de components_size
 
-    void Decoder_KruskalPert_Quad::union_elements(std::vector<unsigned> &component, std::vector<int> &terminal, std::vector<unsigned> &rank,  std::vector<unsigned> &components_size, unsigned u, unsigned v)
+    void Decoder_KruskalPert_Quad::union_elements(std::vector<unsigned> & component, std::vector<int> & terminal, std::vector<unsigned> & rank, std::vector<unsigned> & components_size, unsigned u, unsigned v)
     {
         unsigned c1 = find_element(component, u);
         unsigned c2 = find_element(component, v);
@@ -249,7 +299,7 @@ namespace bmcp
         {
             component[c2] = c1;
 
-            //atualiza tamanho das componentes
+            // atualiza tamanho das componentes
             components_size[c1] += components_size[c2];
             components_size[c2] = 0;
 
@@ -260,7 +310,7 @@ namespace bmcp
         {
             component[c1] = c2;
 
-            //atualiza tamanho das componentes
+            // atualiza tamanho das componentes
             components_size[c2] += components_size[c1];
             components_size[c1] = 0;
 
@@ -271,7 +321,7 @@ namespace bmcp
 
     //-----------------------------[ Find ]--------------------------------//
 
-    unsigned Decoder_KruskalPert_Quad::find_element(std::vector<unsigned> &component, unsigned v)
+    unsigned Decoder_KruskalPert_Quad::find_element(std::vector<unsigned> & component, unsigned v)
     {
         if (component[v] == v)
             return v;
@@ -283,14 +333,14 @@ namespace bmcp
 
     //-----------------------------[ Quick sort ]--------------------------------//
 
-    void Decoder_KruskalPert_Quad::troca_d(std::vector<double> &v, int a, int b)
+    void Decoder_KruskalPert_Quad::troca_d(std::vector<double> & v, int a, int b)
     {
         double aux = v[a];
         v[a] = v[b];
         v[b] = aux;
     }
 
-    void Decoder_KruskalPert_Quad::troca_e(std::vector<edge> &edges, int a, int b)
+    void Decoder_KruskalPert_Quad::troca_e(std::vector<edge> & edges, int a, int b)
     {
         edge aux = edges[a];
         edges[a] = edges[b];
@@ -298,7 +348,7 @@ namespace bmcp
     }
 
     // separa v[p .. r] e devolve a posição do pivô
-    int Decoder_KruskalPert_Quad::separa(std::vector<double> &v, std::vector<edge> &edges, int p, int r)
+    int Decoder_KruskalPert_Quad::separa(std::vector<double> & v, std::vector<edge> & edges, int p, int r)
     {
         int i, j;
         double c = v[r]; // c é o pivô
@@ -316,7 +366,7 @@ namespace bmcp
     }
 
     // p indica a primeira posicao e r a ultima
-    void Decoder_KruskalPert_Quad::quick_sort(std::vector<double> &v, std::vector<edge> &edges, int p, int r)
+    void Decoder_KruskalPert_Quad::quick_sort(std::vector<double> & v, std::vector<edge> & edges, int p, int r)
     {
         int i;
         if (p < r) // se vetor corrente tem mais de um elemento

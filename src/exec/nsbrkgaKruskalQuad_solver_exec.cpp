@@ -355,7 +355,15 @@ int main(int argc, char *argv[])
                     }
                     ofs << "\n";
                 }
-
+/*
+                ofs << "Cromossomo: \n";
+                for(auto ind : solver.best_individuals){
+                    for(auto alelo : ind.second){
+                        ofs << alelo << ",";
+                    }
+                    ofs << "\n\n";
+                }
+*/
                 ofs.close();
             }
             else
