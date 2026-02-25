@@ -9,6 +9,7 @@ import os
 import statistics as stats
 from plotter_definitions import *
 
+#os gráficos serão gerados na pasta hypervolume
 dirname = os.path.dirname(__file__)
 
 min_hypervolume = 1.0
@@ -178,11 +179,15 @@ for i in range(len(solvers)):
     for size in sizes:
         y.append(stats.mean(hypervolume_per_size[solvers[i]][size]))
     plt.plot(sizes, y, label = solver_labels[solvers[i]], marker = (i + 3, 2, 0), color = colors[i], alpha = 0.80)
+#mantem escala log, mas mostra apenas os valores de size (160, 320, 640)
 plt.xscale("log")
-plt.yscale("function", functions=(partial(np.power, 10.0), np.log10))
-plt.legend(fontsize="large", loc="lower left")
+plt.xticks(sizes, [str(s) for s in sizes])
+plt.minorticks_off()
+plt.yscale("linear")
+plt.legend(fontsize="large", loc="upper right")
+plt.xticks(sizes)
 plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%d'))
-plt.gca().yaxis.set_major_formatter(FormatStrFormatter('%.1f'))
+plt.gca().yaxis.set_major_formatter(FormatStrFormatter('%.4f'))
 plt.tight_layout()
 filename = os.path.join(dirname, "hypervolume/hypervolume_mean_per_size.png")
 plt.savefig(bbox_inches='tight', fname=filename, format="png")
