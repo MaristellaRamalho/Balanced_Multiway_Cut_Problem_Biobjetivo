@@ -2,12 +2,12 @@ import pandas as pd
 import os
 
 #VARIÁVEIS DE CONFIGURAÇÃO
-BASE_DIR = 'TESTES_NSBRKGA_MAX_E_QUAD_2048s'
+BASE_DIR = 'TESTES_NSBRKGA_COLORACAO_KRUSKAL_2048s'
 PATH_PARETO = os.path.join(BASE_DIR, 'pareto')
 PATH_STATISTICS = os.path.join(BASE_DIR, 'statistics')
 
 tempo = "2048s"
-NOME_SAIDA = f'Resultados_NSBRKGA_Coloracao{tempo}.xlsx'
+NOME_SAIDA = f'Resultados_NSBRKGA_Coloracao_Kruskal{tempo}.xlsx'
 
 
 instancias_base = [
@@ -40,7 +40,15 @@ instancias_base = [
     "N640_M8N_K80_1", "N640_M8N_K80_2", "N640_M8N_K80_3"
 ]
 
-metodos = ["nsbrkgaColoracaoMax", "nsbrkgaColoracaoQuad"]
+
+MAPEAMENTO_LEGENDA = {
+    'nsbrkgaMax': 'nsbrkgaColoracaoMax',
+    'nsbrkgaQuad': 'nsbrkgaColoracaoQuad',
+    'nsbrkgaKruskalMax': 'nsbrkgaKruskalMax',
+    'nsbrkgaKruskalQuad' : 'nsbrkgaKruskalQuad'
+}
+
+metodos = ["nsbrkgaMax", "nsbrkgaQuad", "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad"]
 seeds = ["1089661", "1602347", "1644410"]
 
 def format_brazilian(val):
@@ -57,7 +65,7 @@ def processar():
     for metodo in metodos:
         rows = []
         # Nome das abas como metodo_tempo
-        nome_aba = f"{metodo}_{tempo}"
+        nome_aba = f"{MAPEAMENTO_LEGENDA[metodo]}_{tempo}"
         print(f"Processando: {nome_aba}...")
         
         for inst in instancias_base:
@@ -112,7 +120,7 @@ def processar():
 
                 # Montagem da linha conforme estrutura solicitada
                 rows.append({
-                    "metodo": metodo,
+                    "metodo": MAPEAMENTO_LEGENDA[metodo],
                     "instancia": inst,
                     "Nodes": nodes,
                     "Edges": edges,
