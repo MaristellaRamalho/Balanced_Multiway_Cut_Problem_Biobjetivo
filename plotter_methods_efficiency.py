@@ -1,94 +1,203 @@
 import os
 import matplotlib.pyplot as plt
-import numpy as np
-from collections import defaultdict
-import plotter_definitions as pd
+from matplotlib.ticker import FormatStrFormatter
+import statistics as stats
+from plotter_definitions import *
+import matplotlib.ticker as ticker
 
-# Configurações de diretório
-STATS_DIR = "statistics"
+dirname = os.path.dirname(__file__)
+STATS_DIR = os.path.join(dirname, "statistics")
+
 
 def parse_stats_file(filepath):
-    """Lê o arquivo e retorna um dicionário com os valores numéricos."""
     data = {}
+
     if not os.path.exists(filepath):
         return None
+
     try:
-        with open(filepath, 'r') as f:
+        with open(filepath, "r") as f:
             for line in f:
                 if ":" in line:
                     key, val = line.split(":", 1)
                     data[key.strip()] = val.strip()
-        
+
         return {
             "vertices": int(data.get("Number of vertices", 0)),
             "edges": int(data.get("Number of edges", 0)),
             "iterations": int(data.get("Number of iterations", 1)),
-            "time": float(data.get("Solving time", 0))
+            "time": float(data.get("Solving time", 0.0))
         }
-    except Exception as e:
-        print(f"Erro ao ler {filepath}: {e}")
+
+    except Exception:
         return None
 
-def generate_individual_plots():
-    # Estrutura para armazenar os dados calculados
-    # data_points[solver] = { instance: { 'x': val, 'ratios': [val1, val2, val3] } }
-    data_points = defaultdict(lambda: defaultdict(lambda: {'x': 0, 'ratios': []}))
 
-    # Processamento
-    for solver in pd.solvers:
-        is_kruskal = "Kruskal" in solver
-        
-        for inst in pd.instances:
-            for seed in pd.seeds:
-                filename = f"{inst}_{solver}_{seed}.txt"
-                filepath = os.path.join(STATS_DIR, filename)
-                
-                stats = parse_stats_file(filepath)
-                if stats:
-                    # Define o valor do eixo X conforme o tipo de solver
-                    x_val = stats["edges"] if is_kruskal else stats["vertices"]
-                    ratio = stats["time"] / stats["iterations"]
-                    
-                    data_points[solver][inst]['x'] = x_val
-                    data_points[solver][inst]['ratios'].append(ratio)
+# Separação dos solvers
+coloring_solvers = [s for s in solvers if "Kruskal" not in s]
+kruskal_solvers = [s for s in solvers if "Kruskal" in s]
 
-    # Geração de um gráfico para cada solver
-    for i, solver in enumerate(pd.solvers):
-        plt.figure(figsize=(10, 6))
-        
-        x_final = []
-        y_final = []
-        
-        # Calcula a média das seeds para cada instância do solver atual 
-        for inst, info in data_points[solver].items():
-            if info['ratios']:
-                x_final.append(info['x'])
-                y_final.append(np.mean(info['ratios']))
-        
-        # Ordenação para garantir que a linha do gráfico siga o eixo X crescentemente
-        if x_final:
-            sorted_idx = np.argsort(x_final)
-            x_plot = np.array(x_final)[sorted_idx]
-            y_plot = np.array(y_final)[sorted_idx]
-            
-            # Plotagem
-            label_name = pd.solver_labels[solver]
-            plt.plot(x_plot, y_plot, marker='o', linestyle='-', color=pd.colors[i], label=label_name)
-            
-            # Configurações 
-            is_kruskal = "Kruskal" in solver
-            xlabel = "Número de Arestas" if is_kruskal else "Número de Vértices"
-            
-            plt.title(f"Eficiência: {label_name}")
-            plt.xlabel(xlabel)
-            plt.ylabel("Média (Solving Time / Iterations)")
-            plt.grid(True, which="both", ls="--", alpha=0.5)
-            plt.legend()
-            
-            # Salva cada gráfico com o nome do solver
-            filename_png = f"eficiência_{solver}.png"
-            plt.savefig(filename_png)
-            plt.close() # Fecha a figura atual para não sobrepor na próxima iteração
+# Processamento solvers de coloração
+time_per_vertices = {}
 
-if __name__ == "__main__":
-    generate_individual_plots()
+for solver in coloring_solvers:
+    time_per_vertices[solver] = {}
+    for size in sizes:
+        time_per_vertices[solver][size] = []
+
+for size in sizes:
+    for instance in instances_per_size[size]:
+        for solver in coloring_solvers:
+            for seed in seeds:
+
+                filename = os.path.join(
+                    STATS_DIR,
+                    instance + "_" + solver + "_" + str(seed) + ".txt"
+                )
+
+                stats_file = parse_stats_file(filename)
+
+                if stats_file and stats_file["iterations"] > 0:
+                    ratio = stats_file["time"] / stats_file["iterations"]
+                    v = stats_file["vertices"]
+                    time_per_vertices[solver][v].append(ratio)
+
+
+# Processamento solvers de kruskal
+time_per_edges = {}
+
+for solver in kruskal_solvers:
+    time_per_edges[solver] = {}
+
+for instance in instances:
+    for solver in kruskal_solvers:
+        for seed in seeds:
+
+            filename = os.path.join(
+                STATS_DIR,
+                instance + "_" + solver + "_" + str(seed) + ".txt"
+            )
+
+            stats_file = parse_stats_file(filename)
+
+            if stats_file and stats_file["iterations"] > 0:
+                ratio = stats_file["time"] / stats_file["iterations"]
+                e = stats_file["edges"]
+
+                if e not in time_per_edges[solver]:
+                    time_per_edges[solver][e] = []
+
+                time_per_edges[solver][e].append(ratio)
+
+
+
+#cálculo dos limites do eixo y
+all_y_values = []
+
+for solver in coloring_solvers:
+    x_values = sorted(time_per_vertices[solver].keys())
+    y = [stats.mean(time_per_vertices[solver][x]) for x in x_values]
+    all_y_values.extend(y)
+
+for solver in kruskal_solvers:
+    x_values = sorted(time_per_edges[solver].keys())
+    y = [stats.mean(time_per_edges[solver][e]) for e in x_values]
+    all_y_values.extend(y)
+
+y_min = min(all_y_values)
+y_max = max(all_y_values)
+
+#Plotando os dois graficos no mesmo qudro -> mesma escala eixo y
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 5))
+
+# ---- COLORAÇÃO ----
+
+ax1.set_xlabel("Número de Vértices", fontsize="large")
+ax1.set_ylabel("Média (Solving Time / Iterations)", fontsize="large")
+ax1.tick_params(axis="both", which="both", labelsize="large")
+ax1.grid(alpha=0.5, color='gray', linestyle='dashed', linewidth=0.5)
+
+for solver in coloring_solvers:
+    i = solvers.index(solver)
+    x_values = sorted(time_per_vertices[solver].keys())
+    y = [stats.mean(time_per_vertices[solver][x]) for x in x_values]
+
+    ax1.plot(
+        x_values,
+        y,
+        label=solver_labels[solver],
+        marker=(i + 3, 2, 0),
+        color=colors[i],
+        alpha=0.80
+    )
+
+ax1.set_xscale("log")
+
+# nos ticks aparece apenas 160 320 e 640
+ax1.xaxis.set_major_locator(ticker.FixedLocator(sizes))
+ax1.xaxis.set_major_formatter(FormatStrFormatter('%d'))
+ax1.xaxis.set_minor_locator(ticker.NullLocator())
+
+ax1.set_yscale("linear")
+ax1.set_ylim(y_min, y_max)
+
+ax1.xaxis.set_major_formatter(FormatStrFormatter('%d'))
+ax1.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+
+ax1.legend(fontsize="large", loc="upper right")
+
+
+# ---- KRUSKAL ----
+
+ax2.set_xlabel("Número de Arestas", fontsize="large")
+ax2.set_ylabel("Média (Solving Time / Iterations)", fontsize="large")
+ax2.tick_params(axis="both", which="both", labelsize="large")
+ax2.grid(alpha=0.4, color='gray', linestyle='dashed', linewidth=0.5)
+
+for solver in kruskal_solvers:
+    i = solvers.index(solver)
+    x_values = sorted(time_per_edges[solver].keys())
+    y_values = [stats.mean(time_per_edges[solver][e]) for e in x_values]
+
+    ax2.plot(
+        x_values,
+        y_values,
+        label=solver_labels[solver],
+        marker='o',
+        markersize=4,
+        linewidth=1.5,
+        color=colors[i],
+        alpha=0.85
+    )
+
+ax2.set_xscale("log")
+
+all_edges = sorted({e for solver in kruskal_solvers for e in time_per_edges[solver].keys()})
+ax2.set_xlim(min(all_edges), max(all_edges))
+
+ax2.xaxis.set_major_locator(
+    ticker.LogLocator(base=10.0, subs=(1.0, 2.0, 5.0))
+)
+
+ax2.xaxis.set_major_formatter(FormatStrFormatter('%d'))
+ax2.set_ylim(y_min, y_max)
+ax2.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+
+ax2.legend(fontsize="large", loc="upper left")
+
+
+plt.tight_layout()
+
+plt.savefig(
+    bbox_inches='tight',
+    fname=os.path.join(dirname, "statistics/time_mean_combined.png"),
+    format="png"
+)
+
+plt.savefig(
+    bbox_inches='tight',
+    fname=os.path.join(dirname, "statistics/time_mean_combined.pdf"),
+    format="pdf"
+)
+
+plt.close()
