@@ -32,7 +32,7 @@ N640_M8N_K80_1 N640_M8N_K80_2 N640_M8N_K80_3
 N640_M8N_K160_1 N640_M8N_K160_2 N640_M8N_K160_3
 )
 
-solvers=(nsbrkgaKruskalMax nsbrkgaKruskalQuad)
+solvers=(nsbrkgaColoracaoMax nsbrkgaColoracaoQuad nsbrkgaKruskalMax nsbrkgaKruskalQuad)
 seeds=(1089661 1602347 1644410)
 versions=(best median)
 
@@ -168,7 +168,7 @@ N640_M8N_K160_1 N640_M8N_K160_2 N640_M8N_K160_3
 )
 
 # nsbrkgaMax e nsbrkgaQuad são as versões de coloração
-solvers=(nsbrkgaMax nsbrkgaQuad nsbrkgaKruskalMax nsbrkgaKruskalQuad)
+solvers=(nsbrkgaColoracaoMax nsbrkgaColoracaoQuad nsbrkgaKruskalMax nsbrkgaKruskalQuad)
 
 commands=()
 
