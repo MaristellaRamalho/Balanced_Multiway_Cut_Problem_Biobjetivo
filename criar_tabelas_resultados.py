@@ -41,7 +41,14 @@ instancias_base = [
 ]
 
 
-metodos = ["nsbrkgaColoracaoMax", "nsbrkgaColoracaoQuad", "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad"]
+MAPEAMENTO_LEGENDA = {
+    'nsbrkgaMax': 'nsbrkgaColoracaoMax',
+    'nsbrkgaQuad': 'nsbrkgaColoracaoQuad',
+    'nsbrkgaKruskalMax': 'nsbrkgaKruskalMax',
+    'nsbrkgaKruskalQuad' : 'nsbrkgaKruskalQuad'
+}
+
+metodos = ["nsbrkgaMax", "nsbrkgaQuad", "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad"]
 seeds = ["1089661", "1602347", "1644410"]
 
 def format_brazilian(val):
@@ -58,7 +65,7 @@ def processar():
     for metodo in metodos:
         rows = []
         # Nome das abas como metodo_tempo
-        nome_aba = f"{metodo}_{tempo}"
+        nome_aba = f"{MAPEAMENTO_LEGENDA[metodo]}_{tempo}"
         print(f"Processando: {nome_aba}...")
         
         for inst in instancias_base:
@@ -113,7 +120,7 @@ def processar():
 
                 # Montagem da linha conforme estrutura solicitada
                 rows.append({
-                    "metodo": metodo,
+                    "metodo": MAPEAMENTO_LEGENDA[metodo],
                     "instancia": inst,
                     "Nodes": nodes,
                     "Edges": edges,
