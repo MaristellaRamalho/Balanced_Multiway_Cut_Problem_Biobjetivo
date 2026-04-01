@@ -201,7 +201,7 @@ do
     #Adiciona fronteira do método exato
     arquivo_cplex="${path}/pareto/${instance}_cplex.txt"
     command+="--pareto-${j} ${arquivo_cplex} "
-    command+="--hypervolume-${j} ${path}/hypervolume/${instance}_cplex.txt "
+    ommand+="--reference-pareto ${path}/pareto/${instance}.txt "
     j=$((j+1))
 
     if [ $i -lt $num_processes ]
