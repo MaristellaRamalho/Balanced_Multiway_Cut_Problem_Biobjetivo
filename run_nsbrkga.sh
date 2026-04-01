@@ -197,6 +197,13 @@ do
             j=$((j+1))
         done
     done
+
+    #Adiciona fronteira do método exato
+    arquivo_cplex="${path}/pareto/${instance}_cplex.txt"
+    command+="--pareto-${j} ${arquivo_cplex} "
+    command+="--hypervolume-${j} ${path}/hypervolume/${instance}_cplex.txt "
+    j=$((j+1))
+
     if [ $i -lt $num_processes ]
     then
         commands[$i]+="$command"
@@ -250,12 +257,20 @@ do
             j=$((j+1))
         done
     done
+       
+    #Adiciona fronteira do método exato
+    arquivo_cplex="${path}/pareto/${instance}_cplex.txt"
+    command+="--pareto-${j} ${arquivo_cplex} "
+    command+="--hypervolume-${j} ${path}/hypervolume/${instance}_cplex.txt "
+    j=$((j+1))
+
     if [ $i -lt $num_processes ]
     then
         commands[$i]+="$command"
     else
         commands[$((i%num_processes))]+=" && $command"
     fi
+    #echo "$command"
     i=$((i+1))
 done
 
@@ -276,6 +291,7 @@ eval $final_command
 
 wait
 
+#Results_aggregator não consdeira arquivos do método exato porque tem apenas uma execução!
 commands=()
 
 for ((i=0;i<num_processes;i++))
@@ -353,11 +369,5 @@ do
 done
 
 eval $final_command
-
-wait
-
-#python3 ${path}/plotter_hypervolume.py &
-#python3 ${path}/plotter_pareto.py &
-
 
 wait
