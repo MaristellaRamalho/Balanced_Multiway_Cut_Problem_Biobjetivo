@@ -26,6 +26,7 @@ delta_hypervolume = max_hypervolume - min_hypervolume
 min_hypervolume = max(min_hypervolume - round(0.025 * delta_hypervolume), 0.00)
 max_hypervolume = min(max_hypervolume + round(0.025 * delta_hypervolume), 1.00)
 
+"""
 for instance in instances:
     plt.figure(figsize = (11, 11))
     plt.title(instance, fontsize = "xx-large")
@@ -46,16 +47,27 @@ for instance in instances:
     filename = os.path.join(dirname, "hypervolume/" + instance + ".png")
     plt.savefig(filename, format = "png")
     plt.close()
+"""
 
+#Plota o gráfico hypervolume_by_method: raincloud plots comparando hypervolume dos 4 métodos nsbrkga + cplex
 hypervolume = []
 
 for solver in solvers:
     hypervolume.append([])
 
 for instance in instances:
-    for i in range(len(solvers)):
+    for i in range(len(solvers_with_seed)):
         for seed in seeds:
-            filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solvers[i] + "_" + str(seed) + ".txt")
+            filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solvers_with_seed[i] + "_" + str(seed) + ".txt")
+            if os.path.exists(filename):
+                with open(filename) as csv_file:
+                    data = csv.reader(csv_file, delimiter = ",")
+                    for row in data:
+                        hypervolume[i].append(float(row[0]))
+                    csv_file.close()
+    
+    for i in range(len(solvers_with_seed), len(solvers)):
+            filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solvers[i] + ".txt")
             if os.path.exists(filename):
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter = ",")
@@ -72,12 +84,13 @@ sns.stripplot(data = hypervolume, palette = colors, orient = "h", size = 2, zord
 sns.boxplot(data = hypervolume, orient = "h", width = 0.20, color = "black", zorder = 10, showcaps = True, boxprops = {'facecolor' : 'none', "zorder" : 10}, showfliers = True, whiskerprops = {'linewidth' : 2, "zorder" : 10}, flierprops = {'markersize' : 2})
 plt.yticks(fontsize="large", ticks=list(range(len(solvers))), labels=[solver_labels[solver] for solver in solvers])
 plt.tight_layout()
-filename = os.path.join(dirname, "hypervolume/hypervolume.png")
+filename = os.path.join(dirname, "hypervolume/hypervolume_by_method.png")
 plt.savefig(bbox_inches='tight', fname=filename, format="png")
-filename = os.path.join(dirname, "hypervolume/hypervolume.pdf")
+filename = os.path.join(dirname, "hypervolume/hypervolume_by_method.pdf")
 plt.savefig(bbox_inches='tight', fname=filename, format="pdf")
 plt.close()
 
+""""
 hypervolume_per_m = {}
 
 for solver in solvers:
@@ -149,7 +162,7 @@ plt.savefig(bbox_inches='tight', fname=filename, format="png")
 filename = os.path.join(dirname, "hypervolume/hypervolume_quartiles_per_m.pdf")
 plt.savefig(bbox_inches='tight', fname=filename, format="pdf")
 plt.close()
-
+"""
 hypervolume_per_size = {}
 
 for solver in solvers:
@@ -159,15 +172,24 @@ for solver in solvers:
 
 for size in sizes:
     for instance in instances_per_size[size]:
-        for solver in solvers:
+        for solver_with_seed in solvers_with_seed:
             for seed in seeds:
-                filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solver + "_" + str(seed) + ".txt")
+                filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solver_with_seed + "_" + str(seed) + ".txt")
                 if os.path.exists(filename):
                     with open(filename) as csv_file:
                         data = csv.reader(csv_file, delimiter = ",")
                         for row in data:
-                            hypervolume_per_size[solver][size].append(float(row[0]))
+                            hypervolume_per_size[solver_with_seed][size].append(float(row[0]))
                         csv_file.close()
+
+        for solver_without_seed in solvers_without_seed:
+            filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solver_without_seed + ".txt")
+            if os.path.exists(filename):
+                with open(filename) as csv_file:
+                    data = csv.reader(csv_file, delimiter = ",")
+                    for row in data:
+                        hypervolume_per_size[solver_without_seed][size].append(float(row[0]))
+                    csv_file.close()
 
 plt.figure()
 plt.xlabel(fontsize="large", xlabel="Number of Vertices")
@@ -177,6 +199,8 @@ plt.grid(alpha=0.5, color='gray', linestyle='dashed', linewidth=0.5, which='both
 for i in range(len(solvers)):
     y = []
     for size in sizes:
+        #print(f"solver : {solvers[i]}")
+        #print(hypervolume_per_size[solvers[i]][size])
         y.append(stats.mean(hypervolume_per_size[solvers[i]][size]))
     plt.plot(sizes, y, label = solver_labels[solvers[i]], marker = (i + 3, 2, 0), color = colors[i], alpha = 0.80)
 #mantem escala log, mas mostra apenas os valores de size (160, 320, 640)
@@ -184,7 +208,7 @@ plt.xscale("log")
 plt.xticks(sizes, [str(s) for s in sizes])
 plt.minorticks_off()
 plt.yscale("linear")
-plt.legend(fontsize="large", loc="upper right")
+plt.legend(fontsize="large", loc="lower left")
 plt.xticks(sizes)
 plt.gca().xaxis.set_major_formatter(FormatStrFormatter('%d'))
 plt.gca().yaxis.set_major_formatter(FormatStrFormatter('%.4f'))
@@ -195,6 +219,7 @@ filename = os.path.join(dirname, "hypervolume/hypervolume_mean_per_size.pdf")
 plt.savefig(bbox_inches='tight', fname=filename, format="pdf")
 plt.close()
 
+"""
 plt.figure()
 plt.xlabel(fontsize="large", xlabel="Number of Vertices")
 plt.ylabel(fontsize="large", ylabel="Hypervolume Ratio")
@@ -225,3 +250,4 @@ plt.savefig(bbox_inches='tight', fname=filename, format="png")
 filename = os.path.join(dirname, "hypervolume/hypervolume_quartiles_per_size.pdf")
 plt.savefig(bbox_inches='tight', fname=filename, format="pdf")
 plt.close()
+"""

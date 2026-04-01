@@ -10,37 +10,46 @@ metrics_labels_to_code = {"Hypervolume Ratio": "hypervolume", "Modified Inverted
 
 metrics = []
 
+"""
+    O results_aggregator só faz sentido para solvers com mais de uma seed -> por isso não considera o método exato
+    O código faz a leitura dos arquivos gerados por todas as execuções (é obrigatório o cálculo do hypervolume, as outras métricas são opcionais → removi o cálculo dos outros indicadores do arquivo de run).
+
+	Para o hypervolume são gerados arquivos instance_solver_stats.txt, que guardam media,desv_padrao do Hypervolume Ratio considerando todas as seeds utilizadas para aquela combinação de instância e solver. Além disso, temos um arquivo instance_solver.txt que mostra os valores do Hypervolume Ratio para cada seed (uma por linha). Esse arquivo também é gerado para outros indicadores, caso sejam usados, basta utilizar o arquivo run.sh original para obter o pipeline completo.
+
+"""
+
+#Por enquanto só usamos Hypervolume
 for instance in instances:
-    for i in range(len(solvers)):
+    for solver in solvers_with_seed: #Percorres solvers com mais de uma seed (nsbrkga)
         for seed in seeds:
-            filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solvers[i] + "_" + str(seed) + ".txt")
+            filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solver + "_" + str(seed) + ".txt")
             if os.path.exists(filename):
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter=",")
                     for row in data:
-                        metrics.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[0], float(row[0])])
+                        metrics.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solver], seed, metrics_labels[0], float(row[0])])
                     csv_file.close()
 
 for instance in instances:
-    for i in range(len(solvers)):
+    for solver in solvers_with_seed:
         for seed in seeds:
-            filename = os.path.join(dirname, "igd_plus/" + instance + "_" + solvers[i] + "_" + str(seed) + ".txt")
+            filename = os.path.join(dirname, "igd_plus/" + instance + "_" + solver + "_" + str(seed) + ".txt")
             if os.path.exists(filename):
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter=",")
                     for row in data:
-                        metrics.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[1], float(row[0])])
+                        metrics.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solver], seed, metrics_labels[1], float(row[0])])
                     csv_file.close()
 
 for instance in instances:
-    for i in range(len(solvers)):
+    for solver in solvers_with_seed:
         for seed in seeds:
-            filename = os.path.join(dirname, "multiplicative_epsilon/" + instance + "_" + solvers[i] + "_" + str(seed) + ".txt")
+            filename = os.path.join(dirname, "multiplicative_epsilon/" + instance + "_" + solver + "_" + str(seed) + ".txt")
             if os.path.exists(filename):
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter=",")
                     for row in data:
-                        metrics.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[2], float(row[0])])
+                        metrics.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance] - 1, size_per_instance[instance], solver_labels[solver], seed, metrics_labels[2], float(row[0])])
                     csv_file.close()
 
 df_metrics = pd.DataFrame(metrics, columns=["problem", "instance", "number of objectives", "chromosome size", "number of vertices", "solver", "seed", "metric name", "metric value"])
@@ -86,37 +95,37 @@ for metric in df_metrics_grouped_by_objectives['metric name'].unique():
 metrics_snapshots = []
 
 for instance in instances:
-    for i in range(len(solvers)):
+    for solver in solvers_with_seed:
         for seed in seeds:
-            filename = os.path.join(dirname, "hypervolume_snapshots/" + instance + "_" + solvers[i] + "_" + str(seed) + ".txt")
+            filename = os.path.join(dirname, "hypervolume_snapshots/" + instance + "_" + solver + "_" + str(seed) + ".txt")
             if os.path.exists(filename):
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter = ",")
                     for row in data:
-                        metrics_snapshots.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[0], float(row[1]), float(row[2])])
+                        metrics_snapshots.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solver], seed, metrics_labels[0], float(row[1]), float(row[2])])
                     csv_file.close()
 
 for instance in instances:
-    for i in range(len(solvers)):
+    for solver in solvers_with_seed:
         for seed in seeds:
-            filename = os.path.join(dirname, "igd_plus_snapshots/" + instance + "_" + solvers[i] + "_" + str(seed) + ".txt")
+            filename = os.path.join(dirname, "igd_plus_snapshots/" + instance + "_" + solver + "_" + str(seed) + ".txt")
             if os.path.exists(filename):
                 with open(filename) as csv_file:
                     data = csv.reader(csv_file, delimiter = ",")
                     for row in data:
-                        metrics_snapshots.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[1], float(row[1]), float(row[2])])
+                        metrics_snapshots.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solver], seed, metrics_labels[1], float(row[1]), float(row[2])])
                     csv_file.close()
 
 for instance in instances:
-    for i in range(len(solvers)):
-        for seed in seeds:
-            filename = os.path.join(dirname, "multiplicative_epsilon_snapshots/" + instance + "_" + solvers[i] + "_" + str(seed) + ".txt")
-            if os.path.exists(filename):
-                with open(filename) as csv_file:
-                    data = csv.reader(csv_file, delimiter = ",")
-                    for row in data:
-                        metrics_snapshots.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solvers[i]], seed, metrics_labels[2], float(row[1]), float(row[2])])
-                    csv_file.close()
+        for solver in solvers_with_seed:
+                for seed in seeds:
+                    filename = os.path.join(dirname, "multiplicative_epsilon_snapshots/" + instance + "_" + solver + "_" + str(seed) + ".txt")
+                    if os.path.exists(filename):
+                        with open(filename) as csv_file:
+                            data = csv.reader(csv_file, delimiter = ",")
+                            for row in data:
+                                metrics_snapshots.append(["BMCP", instance, m_per_instance[instance], size_per_instance[instance], solver_labels[solver], seed, metrics_labels[2], float(row[1]), float(row[2])])
+                            csv_file.close()
 
 df_metrics_snapshots = pd.DataFrame(metrics_snapshots, columns=["problem", "instance", "number of objectives", "chromosome size", "solver", "seed", "metric name", "snapshot time", "metric value"])
 df_metrics_snapshots.to_csv(os.path.join(dirname, "metrics_snapshots.csv"), index=False)

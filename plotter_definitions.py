@@ -26,19 +26,24 @@ instances = ["N160_M2N_K10_1", "N160_M2N_K10_2", "N160_M2N_K10_3",
     "N640_M8N_K40_1", "N640_M8N_K40_2", "N640_M8N_K40_3",
     "N640_M8N_K80_1", "N640_M8N_K80_2", "N640_M8N_K80_3"]
 
-solvers =  ["nsbrkgaMax", "nsbrkgaQuad", "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad"]
+solvers =  ["nsbrkgaMax", "nsbrkgaQuad", "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad", "cplex"]
+
+#Separando solvers com seed -> nsbrkga e solvers sem seed -> método exato
+solvers_with_seed = [s for s in solvers if s != "cplex"]
+solvers_without_seed = ["cplex"]
 
 solver_labels = {"nsbrkgaMax": "NS-BRKGA_Coloracao_Max",
                  "nsbrkgaQuad": "NS-BRKGA_Coloracao_Quad",
                  "nsbrkgaKruskalMax": "NS-BRKGA_Kruskal_Max",
-                 "nsbrkgaKruskalQuad": "NS-BRKGA_Kruskal_Quad"}
+                 "nsbrkgaKruskalQuad": "NS-BRKGA_Kruskal_Quad",
+                 "cplex": "CPLEX"}
 
 seeds = [1089661, 1602347, 1644410]
 
 versions = ["best", "median"]
 
-colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728"]
-colors2 = ["#103c5a", "#804007", "#165016", "#6b1414"]
+colors = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd"]
+colors2 = ["#103c5a", "#804007", "#165016", "#6b1414", "#4a345f"]
 
 ms = [2]
 instances_per_m = {2 : ["N160_M2N_K10_1", "N160_M2N_K10_2", "N160_M2N_K10_3",
