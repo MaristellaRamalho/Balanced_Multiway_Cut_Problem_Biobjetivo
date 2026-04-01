@@ -197,11 +197,6 @@ do
             j=$((j+1))
         done
     done
-    #Adiciona fronteira do método exato
-    arquivo_cplex="${path}/pareto/${instance}_cplex.txt"
-    command+="--pareto-${j} ${arquivo_cplex} "
-    command+="--reference-pareto ${path}/pareto/${instance}.txt "
-    j=$((j+1))
     if [ $i -lt $num_processes ]
     then
         commands[$i]+="$command"
@@ -255,19 +250,12 @@ do
             j=$((j+1))
         done
     done
-       
-    #Adiciona fronteira do método exato
-    arquivo_cplex="${path}/pareto/${instance}_cplex.txt"
-    command+="--pareto-${j} ${arquivo_cplex} "
-    command+="--hypervolume-${j} ${path}/hypervolume/${instance}_cplex.txt "
-    j=$((j+1))
     if [ $i -lt $num_processes ]
     then
         commands[$i]+="$command"
     else
         commands[$((i%num_processes))]+=" && $command"
     fi
-    #echo "$command"
     i=$((i+1))
 done
 
@@ -305,49 +293,42 @@ do
         command="${path}/bin/exec/results_aggregator_exec "
         command+="--hypervolumes ${path}/hypervolume/${instance}_${solver}.txt "
         command+="--hypervolume-statistics ${path}/hypervolume/${instance}_${solver}_stats.txt "
+        command+="--statistics-best ${path}/statistics/${instance}_${solver}_best.txt "
+        command+="--statistics-median ${path}/statistics/${instance}_${solver}_median.txt "
         command+="--pareto-best ${path}/pareto/${instance}_${solver}_best.txt "
         command+="--pareto-median ${path}/pareto/${instance}_${solver}_median.txt "
-
-        if [[ "$solver" != "cplex" ]]; then #NÃO CONSIDERA ARQUIVOS DO MÉTODO EXATO (SÓ UMA FRONTEIRA É GERADA)
-            command+="--statistics-best ${path}/statistics/${instance}_${solver}_best.txt "
-            command+="--statistics-median ${path}/statistics/${instance}_${solver}_median.txt "
-            #command+="--hypervolume-snapshots-best ${path}/hypervolume_snapshots/${instance}_${solver}_best.txt "
-            #command+="--hypervolume-snapshots-median ${path}/hypervolume_snapshots/${instance}_${solver}_median.txt "
-            #command+="--best-solutions-snapshots-best ${path}/best_solutions_snapshots/${instance}_${solver}_best_ "
-            #command+="--best-solutions-snapshots-median ${path}/best_solutions_snapshots/${instance}_${solver}_median_ "
-            command+="--num-non-dominated-snapshots-best ${path}/num_non_dominated_snapshots/${instance}_${solver}_best.txt "
-            command+="--num-non-dominated-snapshots-median ${path}/num_non_dominated_snapshots/${instance}_${solver}_median.txt "
-            command+="--populations-snapshots-best ${path}/populations_snapshots/${instance}_${solver}_best_ "
-            command+="--populations-snapshots-median ${path}/populations_snapshots/${instance}_${solver}_median_ "
-            command+="--num-fronts-snapshots-best ${path}/num_fronts_snapshots/${instance}_${solver}_best.txt "
-            command+="--num-fronts-snapshots-median ${path}/num_fronts_snapshots/${instance}_${solver}_median.txt "
-
+        #command+="--hypervolume-snapshots-best ${path}/hypervolume_snapshots/${instance}_${solver}_best.txt "
+        #command+="--hypervolume-snapshots-median ${path}/hypervolume_snapshots/${instance}_${solver}_median.txt "
+        #command+="--best-solutions-snapshots-best ${path}/best_solutions_snapshots/${instance}_${solver}_best_ "
+        #command+="--best-solutions-snapshots-median ${path}/best_solutions_snapshots/${instance}_${solver}_median_ "
+        command+="--num-non-dominated-snapshots-best ${path}/num_non_dominated_snapshots/${instance}_${solver}_best.txt "
+        command+="--num-non-dominated-snapshots-median ${path}/num_non_dominated_snapshots/${instance}_${solver}_median.txt "
+        command+="--populations-snapshots-best ${path}/populations_snapshots/${instance}_${solver}_best_ "
+        command+="--populations-snapshots-median ${path}/populations_snapshots/${instance}_${solver}_median_ "
+        command+="--num-fronts-snapshots-best ${path}/num_fronts_snapshots/${instance}_${solver}_best.txt "
+        command+="--num-fronts-snapshots-median ${path}/num_fronts_snapshots/${instance}_${solver}_median.txt "
+        if [[ "$solver" == nsbrkga* ]]
+        then
+            command+="--num-elites-snapshots-best ${path}/num_elites_snapshots/${instance}_${solver}_best.txt "
+            command+="--num-elites-snapshots-median ${path}/num_elites_snapshots/${instance}_${solver}_median.txt "
+        fi
+        j=0;
+        for seed in ${seeds[@]}
+        do
+            command+="--statistics-${j} ${path}/statistics/${instance}_${solver}_${seed}.txt "
+            command+="--pareto-${j} ${path}/pareto/${instance}_${solver}_${seed}.txt "
+            command+="--hypervolume-${j} ${path}/hypervolume/${instance}_${solver}_${seed}.txt "
+            #command+="--hypervolume-snapshots-${j} ${path}/hypervolume_snapshots/${instance}_${solver}_${seed}.txt "
+            #command+="--best-solutions-snapshots-${j} ${path}/best_solutions_snapshots/${instance}_${solver}_${seed}_ "
+            command+="--num-non-dominated-snapshots-${j} ${path}/num_non_dominated_snapshots/${instance}_${solver}_${seed}.txt "
+            command+="--populations-snapshots-${j} ${path}/populations_snapshots/${instance}_${solver}_${seed}_ "
+            command+="--num-fronts-snapshots-${j} ${path}/num_fronts_snapshots/${instance}_${solver}_${seed}.txt "
             if [[ "$solver" == nsbrkga* ]]
             then
-                command+="--num-elites-snapshots-best ${path}/num_elites_snapshots/${instance}_${solver}_best.txt "
-                command+="--num-elites-snapshots-median ${path}/num_elites_snapshots/${instance}_${solver}_median.txt "
+                command+="--num-elites-snapshots-${j} ${path}/num_elites_snapshots/${instance}_${solver}_${seed}.txt "
             fi
-
-            j=0;
-            for seed in ${seeds[@]}
-            do
-                command+="--statistics-${j} ${path}/statistics/${instance}_${solver}_${seed}.txt "
-                command+="--pareto-${j} ${path}/pareto/${instance}_${solver}_${seed}.txt "
-                command+="--hypervolume-${j} ${path}/hypervolume/${instance}_${solver}_${seed}.txt "
-                #command+="--hypervolume-snapshots-${j} ${path}/hypervolume_snapshots/${instance}_${solver}_${seed}.txt "
-                #command+="--best-solutions-snapshots-${j} ${path}/best_solutions_snapshots/${instance}_${solver}_${seed}_ "
-                command+="--num-non-dominated-snapshots-${j} ${path}/num_non_dominated_snapshots/${instance}_${solver}_${seed}.txt "
-                command+="--populations-snapshots-${j} ${path}/populations_snapshots/${instance}_${solver}_${seed}_ "
-                command+="--num-fronts-snapshots-${j} ${path}/num_fronts_snapshots/${instance}_${solver}_${seed}.txt "
-                if [[ "$solver" == nsbrkga* ]]
-                then
-                    command+="--num-elites-snapshots-${j} ${path}/num_elites_snapshots/${instance}_${solver}_${seed}.txt "
-                fi
-                j=$((j+1))
-            done
-        fi
-
-
+            j=$((j+1))
+        done
         if [ $i -lt $num_processes ]
         then
             commands[$i]+="$command"
@@ -356,7 +337,6 @@ do
         fi
         i=$((i+1))
     done
-    #echo "$command"
 done
 
 for ((i=0;i<num_processes;i++))
