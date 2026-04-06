@@ -11,7 +11,7 @@ num_non_dominated_snapshots/
 pareto/
 pareto_1024s/
 populations_snapshots/
-statistics/
+statistics/*
 statistics_1024s/
 metrics
 metrics_snapshots
