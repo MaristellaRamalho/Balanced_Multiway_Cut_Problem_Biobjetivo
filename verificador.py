@@ -103,6 +103,15 @@ def ler_pareto(path):
             expected_costs.append((c1, c2))
         except ValueError:
             continue 
+    
+    msg_erro = []
+    for ec1 in expected_costs:
+        for ec2 in expected_costs:
+            if ec1[0] == ec2[0] and ec1[1] == ec2[1]:
+                continue
+            if ec1[0] < ec2[0] and ec1[1] <= ec2[1] or ec1[0] <= ec2[0] and ec1[1] < ec2[1]:
+                msg_erro.append(f"{ec2} é dominado por {ec1}\n")
+
 
     solutions_components = []
 
@@ -126,7 +135,7 @@ def ler_pareto(path):
         if comp_dict:
             solutions_components.append(comp_dict)
 
-    return expected_costs, solutions_components
+    return expected_costs, solutions_components, msg_erro
 
 def verificar_solucao(grafo, terminais, n, k, componentes):
     msg_erro = []
@@ -209,7 +218,7 @@ def main():
     solucoes_obtidas_stats = 0
     
     arquivos_com_erro = []
-    
+
     for p_file in pareto_files:
         filename = os.path.basename(p_file) 
         
@@ -294,7 +303,10 @@ def main():
                 has_error = True
 
         # Valida Soluções
-        exp_costs, solutions = ler_pareto(p_file)
+        exp_costs, solutions, msg = ler_pareto(p_file)
+        if len(msg) > 0:
+            has_error = True
+            #print(f"   [FALHA] Falha de dominância. {msg} ({filename})")
         
         if len(exp_costs) != len(solutions):
             print(f"   [ERRO] Cabeçalho ({len(exp_costs)}) vs Componentes ({len(solutions)})")

@@ -155,6 +155,9 @@ namespace bmcp
         costs[0] = custo_corte;
         costs[1] = sqrt(gd) / gd_max;
 
+        // costs[2] = (naturally_cut_cost - discount_cut_cost);
+        // costs[3] = maxV/balanceamentoPerfeito; 
+
         return costs;
     }
 
