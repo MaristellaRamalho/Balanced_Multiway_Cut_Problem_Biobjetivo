@@ -13,3 +13,6 @@ __pycache__
 ./populations_snapshots/
 ./statistics/
 ./statistics_1024s/
+./metrics
+./metrics_snapshots
+./venv*
