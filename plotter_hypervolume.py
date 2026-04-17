@@ -30,7 +30,7 @@ max_hypervolume = min(max_hypervolume + round(0.025 * delta_hypervolume), 1.00)
 for instance in instances:
     plt.figure(figsize = (11, 11))
     plt.title(instance, fontsize = "xx-large")
-    plt.xlabel("Hypervolume Ratio", fontsize = "x-large")
+    plt.xlabel("Razão de Hipervolume", fontsize = "x-large")
     xs = []
     for solver in solvers:
         filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solver + ".txt")
@@ -76,7 +76,7 @@ for instance in instances:
                     csv_file.close()
 
 plt.figure()
-plt.xlabel(fontsize="large", xlabel="Hypervolume Ratio")
+plt.xlabel(fontsize="large", xlabel="Razão de Hipervolume")
 plt.tick_params(axis="x", which="both", labelsize="large")
 plt.grid(alpha=0.5, color="gray", linestyle="dashed", linewidth=0.5, which="both")
 pt.half_violinplot(data = hypervolume, palette = colors, orient = "h", width = 0.6, cut = 0.0, inner = None)
@@ -192,14 +192,14 @@ for size in sizes:
                     csv_file.close()
 
 plt.figure()
-plt.xlabel(fontsize="large", xlabel="Number of Vertices")
-plt.ylabel(fontsize="large", ylabel="Hypervolume Ratio")
+plt.xlabel(fontsize="large", xlabel="Número de vértices")
+plt.ylabel(fontsize="large", ylabel="Razão de Hipervolume")
 plt.tick_params(axis="both", which="both", labelsize="large")
 plt.grid(alpha=0.5, color='gray', linestyle='dashed', linewidth=0.5, which='both')
 for i in range(len(solvers)):
     y = []
     for size in sizes:
-        #print(f"solver : {solvers[i]}")
+        #print(f"solver: {solvers[i]} | size: {size} ")
         #print(hypervolume_per_size[solvers[i]][size])
         y.append(stats.mean(hypervolume_per_size[solvers[i]][size]))
     plt.plot(sizes, y, label = solver_labels[solvers[i]], marker = (i + 3, 2, 0), color = colors[i], alpha = 0.80)
