@@ -83,6 +83,7 @@ for m in ms:
                         #print(ys)
                         csv_file.close()
 
+                    #SE linha == coluna : plota densidade
                     for j in range(m):
                         axs[j][j].set_xlim(left = min_ys[j], right = max_ys[j])
                         axs[j][j].set_xlabel(xlabel = "$f_{" + str(j + 1) + "}$", fontsize = "x-large")
@@ -91,13 +92,17 @@ for m in ms:
                         sns.kdeplot(data = ys[j], ax = axs[j][j], color = colors[i], label = solver_labels[solvers[i]], marker = (i + 3, 2, 0), alpha = 0.80)
                         axs[j][j].legend(loc = "best")
                         for l in range(m):
-                            if j != l:
+                            if j != l: #Senão, plota a fronteira
                                 axs[j][l].set_xlim(left = min_ys[l], right = max_ys[l])
                                 axs[j][l].set_ylim(bottom = min_ys[j], top = max_ys[j])
                                 axs[j][l].set_xlabel(xlabel = "$f_{" + str(l + 1) + "}$", fontsize = "x-large")
                                 axs[j][l].set_ylabel(ylabel = "$f_{" + str(j + 1) + "}$", fontsize = "x-large")
                                 axs[j][l].scatter(x = ys[l], y = ys[j], color = colors[i], label = solver_labels[solvers[i]], marker = (i + 3, 2, 0), alpha = 0.80)
                                 axs[j][l].legend(loc = "best", fontsize = "small" )
+                    for row in axs:
+                        for ax in row:
+                            # Rotaciona os labels do eixo X para n se sobreporem
+                            ax.tick_params(axis='x', rotation=45)
                     del ys
             plt.subplots_adjust(wspace = 0.16 + 0.07 * m, hspace = 0.16 + 0.07 * m)
             filename = os.path.join(dirname, "pareto/" + instance + "_" + version + ".png")
