@@ -54,11 +54,13 @@ for m in ms:
                                 
             for i in range(m):
                 delta_y = max_ys[i] - min_ys[i]
-                min_ys[i] = min_ys[i] - round(0.025 * delta_y)
-                max_ys[i] = max_ys[i] + round(0.025 * delta_y)
-            fig, axs = plt.subplots(nrows = m, ncols = m, figsize = (5.0 * m, 5.0 * m), squeeze = False, num = 1, clear = True)
-            fig.set_size_inches(5.0 * m, 5.0 * m)
-            fig.suptitle(instance, fontsize = "xx-large")
+                min_ys[i] = min_ys[i] - 0.025 * delta_y
+                max_ys[i] = max_ys[i] + 0.025 * delta_y
+                #min_ys[i] = min_ys[i] - round(0.025 * delta_y)
+                #max_ys[i] = max_ys[i] + round(0.025 * delta_y)
+            fig, axs = plt.subplots(nrows = 1, ncols = m, figsize = (10.0, 5.0), squeeze = False)
+            fig.suptitle(instance, fontsize = "large")
+
             for i in range(len(solvers)):
                 if(solvers[i] not in solvers_without_seed):
                     filename = os.path.join(dirname, "pareto/" + instance + "_" + solvers[i] + "_" + version + ".txt")
@@ -82,28 +84,25 @@ for m in ms:
                                     break
                         #print(ys)
                         csv_file.close()
+                    
+                    #Plotagem das fronteiras : 2 subplots (f1 vs f2 e f2 vs f1)
+                    # axs[0][0] para f2 vs f1, axs[0][1] para f1 vs f2
+                    eixos = [(axs[0][0], 0, 1), (axs[0][1], 1, 0)]
 
-                    #SE linha == coluna : plota densidade
-                    for j in range(m):
-                        axs[j][j].set_xlim(left = min_ys[j], right = max_ys[j])
-                        axs[j][j].set_xlabel(xlabel = "$f_{" + str(j + 1) + "}$", fontsize = "x-large")
-                        axs[j][j].set_yticks([])
-                        axs[j][j].set_ylabel(ylabel = "Densidade", fontsize = "x-large")
-                        sns.kdeplot(data = ys[j], ax = axs[j][j], color = colors[i], label = solver_labels[solvers[i]], marker = (i + 3, 2, 0), alpha = 0.80)
-                        axs[j][j].legend(loc = "best")
-                        for l in range(m):
-                            if j != l: #Senão, plota a fronteira
-                                axs[j][l].set_xlim(left = min_ys[l], right = max_ys[l])
-                                axs[j][l].set_ylim(bottom = min_ys[j], top = max_ys[j])
-                                axs[j][l].set_xlabel(xlabel = "$f_{" + str(l + 1) + "}$", fontsize = "x-large")
-                                axs[j][l].set_ylabel(ylabel = "$f_{" + str(j + 1) + "}$", fontsize = "x-large")
-                                axs[j][l].scatter(x = ys[l], y = ys[j], color = colors[i], label = solver_labels[solvers[i]], marker = (i + 3, 2, 0), alpha = 0.80)
-                                axs[j][l].legend(loc = "best", fontsize = "small" )
-                    for row in axs:
-                        for ax in row:
-                            # Rotaciona os labels do eixo X para n se sobreporem
-                            ax.tick_params(axis='x', rotation=45)
+                    for ax, eixo_y, eixo_x in eixos:
+                        ax.set_xlim(left=min_ys[eixo_x], right=max_ys[eixo_x])
+                        ax.set_ylim(bottom=min_ys[eixo_y], top=max_ys[eixo_y])
+                        ax.set_xlabel(xlabel="$f_{" + str(eixo_x + 1) + "}$", fontsize="x-large")
+                        ax.set_ylabel(ylabel="$f_{" + str(eixo_y + 1) + "}$", fontsize="x-large")
+                        ax.scatter(x=ys[eixo_x], y=ys[eixo_y], color=colors[i], 
+                               label=solver_labels[solvers[i]], marker=(i + 3, 2, 0), alpha=0.80)
+                        ax.legend(loc="best", fontsize="small")
+                        ax.tick_params(axis='x', rotation=45)
                     del ys
-            plt.subplots_adjust(wspace = 0.16 + 0.07 * m, hspace = 0.16 + 0.07 * m)
+                    
+            plt.tight_layout(rect=[0, 0.03, 1, 0.98])
+            filename = os.path.join(dirname, "pareto/" + instance + "_" + version + ".pdf")
+            plt.savefig(filename, format = "pdf")
             filename = os.path.join(dirname, "pareto/" + instance + "_" + version + ".png")
             plt.savefig(filename, format = "png")
+            plt.close()
