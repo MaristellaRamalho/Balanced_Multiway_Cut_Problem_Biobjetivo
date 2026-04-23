@@ -90,7 +90,7 @@ filename = os.path.join(dirname, "hypervolume/hypervolume_by_method.pdf")
 plt.savefig(bbox_inches='tight', fname=filename, format="pdf")
 plt.close()
 
-""""
+"""
 hypervolume_per_m = {}
 
 for solver in solvers:
@@ -163,6 +163,7 @@ filename = os.path.join(dirname, "hypervolume/hypervolume_quartiles_per_m.pdf")
 plt.savefig(bbox_inches='tight', fname=filename, format="pdf")
 plt.close()
 """
+# Plota um grafico com a média do HVR por numero de nós da instância
 hypervolume_per_size = {}
 
 for solver in solvers:
@@ -218,6 +219,81 @@ plt.savefig(bbox_inches='tight', fname=filename, format="png")
 filename = os.path.join(dirname, "hypervolume/hypervolume_mean_per_size.pdf")
 plt.savefig(bbox_inches='tight', fname=filename, format="pdf")
 plt.close()
+
+# Plota a média do HVR por numero de nós e por ordem do numero de arestas -> gera 3 subplots (um para cada tam de aresta - 2N, 4N, 8N), com uma linha p cada método e eixo x indicando o numero de nós
+#Agrupando instancias por num de nós (160, 320, 640) E arestas (M2N, M4N, M8N)
+instances_per_config = {}
+for size in sizes:
+    for edge in edges_sizes:
+        set_size = set(instances_per_size[size])
+        set_edge = set(instances_per_edge_size[edge])
+        instances_per_config[(size, edge)] = list(set_size.intersection(set_edge))
+
+#print(instances_per_config)
+
+# hypervolume_data_edges_nodes: [edge][size][solver] = [lista de valores]
+hypervolume_data_edges_nodes = {edge: {size: {solver: [] for solver in solvers} for size in sizes} for edge in edges_sizes}
+
+for edge in edges_sizes:
+    for size in sizes:
+        for instance in instances_per_config[(size, edge)]:
+            for solver_with_seed in solvers_with_seed:
+                for seed in seeds:
+                    filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solver_with_seed + "_" + str(seed) + ".txt")
+                    if os.path.exists(filename):
+                        #print(f"filename : {filename} | ({edge},{size})")
+                        with open(filename) as f:
+                            data = csv.reader(f)
+                            for row in data:
+                                hypervolume_data_edges_nodes[edge][size][solver_with_seed].append(float(row[0]))
+                                #print(f"{float(row[0])}")
+                            csv_file.close()
+                            
+            for solver_without_seed in solvers_without_seed:
+                filename = os.path.join(dirname, "hypervolume/" + instance + "_" + solver_without_seed + ".txt")
+                if os.path.exists(filename):
+                    #print(f"filename : {filename} | ({edge},{size})")
+                    with open(filename) as csv_file:
+                        data = csv.reader(csv_file, delimiter = ",")
+                        for row in data:
+                            hypervolume_data_edges_nodes[edge][size][solver_without_seed].append(float(row[0]))
+                            #print(f"{float(row[0])}")
+                        csv_file.close()
+
+fig, axes = plt.subplots(1, 3, figsize=(15, 5), sharey=True)
+
+for idx, edge in enumerate(edges_sizes):
+    ax = axes[idx]
+    ax.set_title(f"Ordem das arestas: {edge}")
+    ax.set_xlabel("Número de Vértices")
+    if idx == 0:
+        ax.set_ylabel("Razão de Hipervolume")
+    
+    # Plotar cada solver
+    for i, solver in enumerate(solvers):
+        y = [stats.mean(hypervolume_data_edges_nodes[edge][size][solver]) for size in sizes]
+        ax.plot(sizes, y, label = solver_labels[solvers[i]], marker = (i + 3, 2, 0), color = colors[i], alpha = 0.80)
+
+    ax.set_xscale("log")
+    ax.set_xticks(sizes)
+    ax.set_xticklabels([str(s) for s in sizes])
+    ax.minorticks_off()
+    ax.set_yscale("linear")
+        
+    ax.xaxis.set_major_formatter(FormatStrFormatter('%d'))
+    ax.yaxis.set_major_formatter(FormatStrFormatter('%.4f'))
+    ax.grid(alpha=0.5, color='gray', linestyle='dashed', linewidth=0.5, which='both')
+    ax.legend(fontsize="small", loc="best")
+
+
+plt.subplots_adjust(wspace=0.05, hspace=0.1)
+filename = os.path.join(dirname, "hypervolume/hypervolume_mean_per_size_and_edge.png")
+plt.savefig(bbox_inches='tight', fname=filename, format="png")
+
+filename = os.path.join(dirname, "hypervolume/hypervolume_mean_per_size_and_edge.pdf")
+plt.savefig(bbox_inches='tight', fname=filename, format="pdf")
+plt.close()
+ 
 
 """
 plt.figure()
