@@ -77,11 +77,18 @@ instances_per_m = {2 : ["N160_M2N_K10_1", "N160_M2N_K10_2", "N160_M2N_K10_3",
 m_per_instance = {instance: 2 for instance in instances} #todas as instancias tem 2 objetivos
 
 sizes = [160, 320, 640]
+edges_sizes = ["2N", "4N", "8N"]
 
 instances_per_size = {
     160: [inst for inst in instances if inst.startswith("N160_")],
     320: [inst for inst in instances if inst.startswith("N320_")],
     640: [inst for inst in instances if inst.startswith("N640_")]
+}
+
+instances_per_edge_size = {
+    "2N": [inst for inst in instances if inst.__contains__("_M2N_")],
+    "4N": [inst for inst in instances if inst.__contains__("_M4N_")],
+    "8N": [inst for inst in instances if inst.__contains__("_M8N_")]
 }
 
 size_per_instance = {
