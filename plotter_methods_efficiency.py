@@ -60,7 +60,7 @@ for size in sizes:
                 stats_file = parse_stats_file(filename)
 
                 if stats_file and stats_file["iterations"] > 0:
-                    ratio = stats_file["time"] / stats_file["iterations"] 
+                    ratio = stats_file["iterations"] 
                     v = stats_file["vertices"]
                     time_per_vertices[solver][v].append(ratio)
                 #print(f"num_it : {stats_file["iterations"] } | time : {stats_file["time"] } | v : {stats_file["vertices"]} | ratio : {ratio}")
@@ -84,7 +84,7 @@ for instance in instances:
             stats_file = parse_stats_file(filename)
 
             if stats_file and stats_file["iterations"] > 0:
-                ratio = stats_file["time"] / stats_file["iterations"]
+                ratio = stats_file["iterations"]
                 e = stats_file["edges"]
 
                 if e not in time_per_edges[solver]:
@@ -122,7 +122,7 @@ fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(12, 5))
 # ---- COLORAÇÃO ----
 
 ax1.set_xlabel("Número de Vértices", fontsize="large")
-ax1.set_ylabel("Média (Tempo de execução / Número de iterações)", fontsize="large")
+ax1.set_ylabel("Número de iterações", fontsize="large")
 ax1.tick_params(axis="both", which="both", labelsize="large")
 ax1.grid(alpha=0.5, color='gray', linestyle='dashed', linewidth=0.5)
 
@@ -156,7 +156,7 @@ ax1.xaxis.set_minor_locator(ticker.NullLocator())
 ax1.set_ylim(y_min, y_max)
 
 ax1.xaxis.set_major_formatter(FormatStrFormatter('%d'))
-ax1.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+ax1.yaxis.set_major_formatter(FormatStrFormatter('%d'))
 
 ax1.legend(fontsize="large", loc="upper right")
 
@@ -164,7 +164,7 @@ ax1.legend(fontsize="large", loc="upper right")
 # ---- KRUSKAL ----
 
 ax2.set_xlabel("Número de Arestas", fontsize="large")
-ax2.set_ylabel("Média (Tempo de execução / Número de iterações)", fontsize="large")
+ax2.set_ylabel("Número de iterações", fontsize="large")
 ax2.tick_params(axis="both", which="both", labelsize="large")
 ax2.grid(alpha=0.4, color='gray', linestyle='dashed', linewidth=0.5)
 
@@ -199,7 +199,7 @@ ax2.xaxis.set_major_locator(
 
 ax2.xaxis.set_major_formatter(FormatStrFormatter('%d'))
 ax2.set_ylim(y_min, y_max)
-ax2.yaxis.set_major_formatter(FormatStrFormatter('%.2f'))
+ax2.yaxis.set_major_formatter(FormatStrFormatter('%d'))
 
 ax2.legend(fontsize="large", loc="upper left")
 
