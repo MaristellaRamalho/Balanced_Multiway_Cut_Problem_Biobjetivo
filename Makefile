@@ -301,6 +301,19 @@ $(BIN)/test/nsbrkga_solver_test : $(BIN)/instance/instance.o \
 
 nsbrkga_solver_test : $(BIN)/test/nsbrkga_solver_test
 
+$(BIN)/exec/nsbrkgaColoracaoBase_solver_exec : $(BIN)/instance/instance.o \
+                                  $(BIN)/solution/solution.o \
+                                  $(BIN)/solver/solver.o \
+                                  $(BIN)/solver/nsbrkgaColoracaoBase/Decoder_Coloracao_Base.o \
+                                  $(BIN)/solver/nsbrkgaColoracaoBase/nsbrkga_solver.o \
+                                  $(BIN)/utils/argument_parser.o \
+                                  $(BIN)/exec/nsbrkgaColoracaoBase_solver_exec.o
+	@echo "--> Linking objects..."
+	$(CPP) -o $@ $^ $(CARGS) $(INC)
+	@echo
+
+nsbrkgaColoracaoBase_solver_exec : $(BIN)/exec/nsbrkgaColoracaoBase_solver_exec
+
 $(BIN)/exec/nsbrkgaColoracaoMax_solver_exec : $(BIN)/instance/instance.o \
                                   $(BIN)/solution/solution.o \
                                   $(BIN)/solver/solver.o \
