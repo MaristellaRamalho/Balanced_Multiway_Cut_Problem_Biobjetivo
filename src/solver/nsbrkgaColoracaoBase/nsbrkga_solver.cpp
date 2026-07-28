@@ -1,4 +1,4 @@
-#include "solver/nsbrkgaColoracaoBase/Decoder_Coloracao_Base.hpp"
+#include "solver/nsbrkgaColoracaoBase/nsbrkga_solver.hpp"
 #include "instance/instance.hpp"
 
 namespace bmcp {
