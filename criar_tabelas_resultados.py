@@ -2,12 +2,12 @@ import pandas as pd
 import os
 
 #VARIÁVEIS DE CONFIGURAÇÃO
-BASE_DIR = 'TESTES_NSBRKGA_COLORACAO_KRUSKAL_2048s'
-PATH_PARETO = os.path.join(BASE_DIR, 'pareto')
-PATH_STATISTICS = os.path.join(BASE_DIR, 'statistics')
+BASE_DIR = './'
+PATH_PARETO = os.path.join(BASE_DIR, 'pareto_TESTE_INICIAL_COLORACAO_BASE')
+PATH_STATISTICS = os.path.join(BASE_DIR, 'statistics_TESTE_INICIAL_COLORACAO_BASE')
 
 tempo = "2048s"
-NOME_SAIDA = f'Resultados_NSBRKGA_Coloracao_Kruskal{tempo}.xlsx'
+NOME_SAIDA = f'Resultados_TESTES_INICIAIS_NSBRKGA_Coloracao_Base{tempo}.xlsx'
 
 
 instancias_base = [
@@ -45,10 +45,11 @@ MAPEAMENTO_LEGENDA = {
     'nsbrkgaMax': 'nsbrkgaColoracaoMax',
     'nsbrkgaQuad': 'nsbrkgaColoracaoQuad',
     'nsbrkgaKruskalMax': 'nsbrkgaKruskalMax',
-    'nsbrkgaKruskalQuad' : 'nsbrkgaKruskalQuad'
+    'nsbrkgaKruskalQuad' : 'nsbrkgaKruskalQuad',
+    'nsbrkgaColoracaoBase': 'nsbrkgaColoracaoBase'
 }
 
-metodos = ["nsbrkgaMax", "nsbrkgaQuad", "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad"]
+metodos = ["nsbrkgaMax", "nsbrkgaQuad", "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad","nsbrkgaColoracaoBase"]
 seeds = ["1089661", "1602347", "1644410"]
 
 def format_brazilian(val):
