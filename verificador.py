@@ -306,7 +306,7 @@ def main():
         exp_costs, solutions, msg = ler_pareto(p_file)
         if len(msg) > 0:
             has_error = True
-            #print(f"   [FALHA] Falha de dominância. {msg} ({filename})")
+            print(f"   [FALHA] Falha de dominância. {msg} ({filename})")
         
         if len(exp_costs) != len(solutions):
             print(f"   [ERRO] Cabeçalho ({len(exp_costs)}) vs Componentes ({len(solutions)})")

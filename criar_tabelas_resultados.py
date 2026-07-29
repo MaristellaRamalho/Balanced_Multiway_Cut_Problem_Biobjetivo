@@ -3,11 +3,11 @@ import os
 
 #VARIÁVEIS DE CONFIGURAÇÃO
 BASE_DIR = './'
-PATH_PARETO = os.path.join(BASE_DIR, 'pareto_TESTE_INICIAL_COLORACAO_BASE')
-PATH_STATISTICS = os.path.join(BASE_DIR, 'statistics_TESTE_INICIAL_COLORACAO_BASE')
+PATH_PARETO = os.path.join(BASE_DIR, 'pareto')
+PATH_STATISTICS = os.path.join(BASE_DIR, 'statistics')
 
 tempo = "2048s"
-NOME_SAIDA = f'Resultados_TESTES_INICIAIS_NSBRKGA_Coloracao_Base{tempo}.xlsx'
+NOME_SAIDA = f'Resultados_NSBRKGA_Coloracao_Kruskal{tempo}_SBPO.xlsx'
 
 
 instancias_base = [
@@ -42,8 +42,8 @@ instancias_base = [
 
 
 MAPEAMENTO_LEGENDA = {
-    'nsbrkgaMax': 'nsbrkgaColoracaoMax',
-    'nsbrkgaQuad': 'nsbrkgaColoracaoQuad',
+    'nsbrkgaColoracaoMax': 'nsbrkgaColoracaoMax',
+    'nsbrkgaColoracaoQuad': 'nsbrkgaColoracaoQuad',
     'nsbrkgaKruskalMax': 'nsbrkgaKruskalMax',
     'nsbrkgaKruskalQuad' : 'nsbrkgaKruskalQuad',
     'nsbrkgaColoracaoBase': 'nsbrkgaColoracaoBase'
