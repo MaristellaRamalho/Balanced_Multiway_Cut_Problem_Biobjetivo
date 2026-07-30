@@ -17,6 +17,8 @@ EXTENSION_INSTANCE = ".gr"
 EXTENSION_PARETO = ".txt"
 EXTENSION_STATS = ".txt"
 
+time_limit = 2048
+
 DEBUG = 0
 
 def ler_instancia(path):
@@ -296,10 +298,15 @@ def main():
         if stats_data:
             stats_n = int(stats_data.get("Number of vertices", -1))
             stats_k = int(stats_data.get("Number of terminals", -1))
+            stats_solving_time = float(stats_data.get("Solving time",-1))
             solucoes_obtidas_stats += int(stats_data['Solutions obtained'])
             
             if stats_n != -1 and (stats_n != n or stats_k != k):
                 print(f"   [ALERTA] Divergência Stats vs Instância. N({stats_n}vs{n}), K({stats_k}vs{k})")
+                has_error = True
+
+            if stats_solving_time > (time_limit + 0.5):
+                print(f"arquivo {filename} superou o tempo limite de execução : solving time = {stats_solving_time} | time limit : {time_limit}")
                 has_error = True
 
         # Valida Soluções
