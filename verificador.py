@@ -230,9 +230,9 @@ def main():
                 print(f"[INFO] Ignorando arquivo da fronteira de Pareto de  referência: {filename}")
              continue
         
-        if parts_filname[-1] == "best.txt" or parts_filname[-1] == "median.txt":
+        if parts_filname[-1] == "best.txt" or parts_filname[-1] == "median.txt" or parts_filname[-1] == "cplex.txt":
             if DEBUG > 0 :
-                print(f"[INFO] Ignorando arquivo de best ou median {filename}")
+                print(f"[INFO] Ignorando arquivo de best ou median ou do cplex {filename}")
             continue
         
         has_error = False 
