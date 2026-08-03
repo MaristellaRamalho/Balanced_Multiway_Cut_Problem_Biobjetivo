@@ -2,6 +2,7 @@
 
 #include "solver/solver.hpp"
 #include "solver/nsbrkgaColoracaoBase/Decoder_Coloracao_Base.hpp"
+#include <string>
 
 namespace bmcp {
 /*************************************************************
@@ -74,6 +75,16 @@ class NSBRKGA_Solver : public Solver {
     unsigned num_exchange_individuals = 30;
 
     /************************************************
+     * Type of local search that will be used.
+     ************************************************/
+    std::string local_search_type = "switchSingleNodeColor";
+
+    /*********************************************************
+     * The maximum number of local search iterations allowed (0 means no local search).
+     *********************************************************/
+    unsigned max_local_search_iterations = 1000;
+
+    /************************************************
      * Type of path relinking that will be used.
      ************************************************/
     NSBRKGA::PathRelinking::Type pr_type =
@@ -126,11 +137,6 @@ class NSBRKGA_Solver : public Solver {
      * Number of threads to be used during parallel decoding.
      *********************************************************/
     unsigned num_threads = 1;
-
-    /*********************************************************
-     * The maximum number of local search iterations allowed.
-     *********************************************************/
-    unsigned max_local_search_iterations = 0;
 
     /************************************
      * Last update generation.

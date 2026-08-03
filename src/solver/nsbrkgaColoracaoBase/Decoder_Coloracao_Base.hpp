@@ -4,6 +4,7 @@
 #include "chromosome.hpp"
 #include "instance/instance.hpp"
 #include <vector>
+#include <string>
 
 namespace bmcp {
 
@@ -15,6 +16,10 @@ class Decoder_Coloracao_Base {
 
     const Instance & instance;
 
+    unsigned max_local_search_iterations;
+
+    std::string local_search_type;
+
     /// Position of the beginning of the adjacency list of each node in vector
     std::vector<unsigned> init_adjacency_list;
 
@@ -24,7 +29,7 @@ class Decoder_Coloracao_Base {
     /// Auxiliary structure to store the edges of Graph
     std::vector<edge> list_edges;
 
-    Decoder_Coloracao_Base(const Instance & instance);
+    Decoder_Coloracao_Base(const Instance & instance, std::string local_search_type, unsigned max_local_search_iterations = 0);
 
     // Retorna custos para o NSBRKGA
     std::vector<double> decode(NSBRKGA::Chromosome & chromosome, bool rewrite);

@@ -69,7 +69,7 @@ void NSBRKGA_Solver::capture_snapshot(
 void NSBRKGA_Solver::solve() {
     this->start_time = std::chrono::steady_clock::now();
 
-    Decoder_Coloracao_Base decoderColoracaoBase(this->instance);
+    Decoder_Coloracao_Base decoderColoracaoBase(this->instance, this->local_search_type, this->max_local_search_iterations);
 
     NSBRKGA::NsbrkgaParams params;
     params.num_incumbent_solutions = this->max_num_solutions;
@@ -312,6 +312,8 @@ std::ostream & operator <<(std::ostream & os, const NSBRKGA_Solver & solver) {
        << solver.num_threads << std::endl
        << "Maximum number of local search iterations: "
        << solver.max_local_search_iterations << std::endl
+       << "Type of local search that will be used: "
+       << solver.local_search_type << std::endl
        << "Last update generation: " << solver.last_update_generation
        << std::endl
        << "Last update time: " << solver.last_update_time << std::endl

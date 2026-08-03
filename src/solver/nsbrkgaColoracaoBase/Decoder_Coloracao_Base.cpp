@@ -1,4 +1,5 @@
 #include "solver/nsbrkgaColoracaoBase/Decoder_Coloracao_Base.hpp"
+#include "solver/localSearch_bal/localSearch_bal.hpp"
 #include <limits>
 #include <iostream>
 #include <algorithm>
@@ -12,7 +13,7 @@
 namespace bmcp
 {
 
-     Decoder_Coloracao_Base::Decoder_Coloracao_Base(const Instance &instance) : instance(instance), init_adjacency_list(instance.num_nodes, -1), position_edge_vector(instance.num_edges * 2, -1),  list_edges(instance.num_edges)
+     Decoder_Coloracao_Base::Decoder_Coloracao_Base(const Instance &instance, std::string local_search_type, unsigned max_local_search_iterations) :  instance(instance), local_search_type(local_search_type), max_local_search_iterations(max_local_search_iterations), init_adjacency_list(instance.num_nodes, -1), position_edge_vector(instance.num_edges * 2, -1),  list_edges(instance.num_edges)
     {
         unsigned list_position = 0;
         unsigned edge_position = 0;
@@ -59,7 +60,7 @@ namespace bmcp
         {
             color_node[u] = std::floor(local_chrom[u] * instance.num_terminals);
         }
-
+        
         /// Determina a cor de cada dos nós terminal
         for (unsigned i = 0; i < instance.num_terminals; i++)
         {
@@ -155,6 +156,8 @@ namespace bmcp
 
 
         std::vector<unsigned> components_size(instance.num_terminals, 0);
+        std::vector<std::vector<unsigned>> componentes_solucao(instance.num_terminals,std::vector<unsigned>(0));
+
 
         //Objetivo 1
 
@@ -179,6 +182,7 @@ namespace bmcp
 
         for(unsigned u = 0; u < instance.num_nodes; u++){
            components_size[color_node[u]]++;
+           componentes_solucao[color_node[u]].push_back(u);
         }
 
         if(DEBUG){
@@ -198,6 +202,15 @@ namespace bmcp
         if(DEBUG){
             std::cout << "f1-Custo do corte: " << custo_corte << "\n Balanceamento perfeito: " << balanceamentoPerfeito << "\n maxV: " << maxV << "\n f2-maxV/balPerfeito: " << costs[1] << "\n";
         }
+
+        // vai aplicar busca local
+        if(max_local_search_iterations > 0){
+            // qual busca vai aplicar
+            if(local_search_type == "switchSingleNodeColor"){
+                switchSingleNodeColor::improve(instance,components_size, componentes_solucao, chromosome, costs[0], max_local_search_iterations);
+            }
+        }
+
 
         return costs;
     }

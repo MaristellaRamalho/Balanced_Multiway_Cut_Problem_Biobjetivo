@@ -303,6 +303,7 @@ nsbrkga_solver_test : $(BIN)/test/nsbrkga_solver_test
 
 $(BIN)/exec/nsbrkgaColoracaoBase_solver_exec : $(BIN)/instance/instance.o \
                                   $(BIN)/solution/solution.o \
+                                  $(BIN)/solver/localSearch_bal/localSearch_bal.o \
                                   $(BIN)/solver/solver.o \
                                   $(BIN)/solver/nsbrkgaColoracaoBase/Decoder_Coloracao_Base.o \
                                   $(BIN)/solver/nsbrkgaColoracaoBase/nsbrkga_solver.o \

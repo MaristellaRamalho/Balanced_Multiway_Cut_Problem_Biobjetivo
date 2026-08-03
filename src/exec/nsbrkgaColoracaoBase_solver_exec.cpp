@@ -230,6 +230,17 @@ int main(int argc, char *argv[])
                 std::stoul(arg_parser.option_value("--num-threads"));
         }
 
+         if (arg_parser.option_exists("--local_search_type"))
+        {
+            std::string s = arg_parser.option_value("--local_search_type");
+            std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+
+            if (s.compare("SWITCHSINGLENODECOLOR") == 0)
+            {
+                solver.local_search_type = "switchSingleNodeColor";
+            }
+        }
+
         if (arg_parser.option_exists("--max-local-search-iterations"))
         {
             solver.max_local_search_iterations = std::stoul(
@@ -740,6 +751,7 @@ int main(int argc, char *argv[])
                   << "--reset-intensity <reset_intensity> "
                   << "--num-threads <num_threads> "
                   << "--max-local-search-iterations <max_local_search_iterations> "
+                  << "--local-search-type <local_search_type> "
                   << "--initial-individuals-method <initial_individuals_method> "
                   << "--initial-individuals-percentage <initial_individuals_percentage> "
                   << "--initial-individuals-time-percentage <initial_individuals_time_percentage> "
