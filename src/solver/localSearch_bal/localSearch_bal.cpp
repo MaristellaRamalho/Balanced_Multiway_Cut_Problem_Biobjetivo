@@ -3,7 +3,7 @@
 
 namespace bmcp
 {
-    void switchSingleNodeColor::improve(const Instance &instance, std::vector<unsigned> &components_size, std::vector<std::vector<unsigned>> &componentes_solucao, std::vector<double> &chromosome, double custo_corte, unsigned max_local_search_iterations)
+    void switchSingleNodeColor::improve(const Instance &instance, std::vector<unsigned> &components_size, std::vector<std::vector<unsigned>> &componentes_solucao, std::vector<double> &chromosome, std::vector<double> &costs, unsigned max_local_search_iterations)
     {
         bool improve = 1;
         int cont = 0;
@@ -104,11 +104,11 @@ namespace bmcp
                 } // (u, v) eram de cores distintas e continuam sendo -> aresta ja foi computada -> não muda nada
             }
 
-            if (custo_corte + delta_corte <= custo_corte)
+            if (costs[0] + delta_corte <= costs[0])
             {   // operação não piorou corte
                 // muda cromossomo -> u recebe nova cor
                 chromosome[u] = (double)new_color_node_u / instance.num_terminals;
-                custo_corte = custo_corte + delta_corte;
+                costs[0] = costs[0] + delta_corte;
 
                 // atualiza components_size
                 components_size[color_node_u] -= 1;
@@ -117,6 +117,12 @@ namespace bmcp
                 // atualiza componentes_solucao
                 componentes_solucao[color_node_u].erase(std::remove(componentes_solucao[color_node_u].begin(), componentes_solucao[color_node_u].end(), u), componentes_solucao[color_node_u].end());
                 componentes_solucao[new_color_node_u].push_back(u);
+
+                //atualiza balanceamento
+                int balanceamentoPerfeito = ceil((instance.num_nodes / (double)instance.num_terminals));
+                int maxV = *std::max_element(components_size.begin(), components_size.end()); // maior num de vértices em uma componente
+                costs[1] = maxV / (double) balanceamentoPerfeito;
+
 
                /* 
                 for (unsigned i = 0; i < componentes_solucao.size(); i++)
@@ -131,12 +137,12 @@ namespace bmcp
                     std::cout << "}" << "\n";
                 }*/
 
-                //std::cout << "cromossomo[ " << u << "] = " << chromosome[u] << "\nnovo custo do corte: " << custo_corte << "\n";
+                //std::cout << "cromossomo[ " << u << "] = " << chromosome[u] << "\nnovo custo do corte: " << costs[0] << "\n";
                 improve = 1;
             }
             else
             {
-                //std::cout << "Não houve melhora : novo custo do corte seria " << custo_corte + delta_corte << "\n";
+                //std::cout << "Não houve melhora : novo custo do corte seria " << costs[0] + delta_corte << "\n";
                 //std::cout << "PARANDO BUSCA \n";
                 improve = 0; // não tem melhora -> para
             }
