@@ -148,7 +148,10 @@ namespace bmcp
                     std::cout << "}" << "\n";
                 }
 
-                if(DEBUG) std::cout << "cromossomo[ " << u_target << "] = " << chromosome[u_target] << "\nnovo custo do corte: " << costs[0] << "\n";
+                if(DEBUG){
+                     std::cout << "cromossomo[ " << u_target << "] = " << chromosome[u_target] << "\nnovo custo do corte: " << costs[0] << "\n";
+                     std::cout << "newMaxV: " << newMaxV << " | " << "novo balanceamento: " << costs[1] << "\n";
+                }
             }
             else
             {
