@@ -23,6 +23,12 @@ namespace bmcp
 
         // ponto de referencia objetivo 2: pior balanceamento -> próximo do número total de nós
         this->primal_bound[1] = (double)this->num_nodes;
+
+        this->is_terminal.assign(this->num_nodes, false);
+        for (unsigned t : this->terminals)
+        {
+            this->is_terminal[t] = true;
+        }
     }
 
     Instance::Instance() : num_objectives(2),
@@ -99,8 +105,14 @@ namespace bmcp
         os << "BMCP Instance:" << std::endl;
         os << "Nodes: " << instance.num_nodes << ", Edges: " << instance.num_edges << std::endl;
         os << "Terminals (" << instance.num_terminals << "): ";
-        for (auto t : instance.terminals)
+        for (auto t : instance.terminals){
             os << t << " ";
+        }
+
+        os << "Is_terminal: ";
+        for (auto is_t : instance.is_terminal){
+            os << is_t << " ";
+        }
         os << std::endl;
         os << "Cumulative Cost: " << instance.cumulative_edge_cost << std::endl;
         os << "Bounds: [" << instance.primal_bound[0] << ", " << instance.primal_bound[1] << "]" << std::endl;

@@ -71,6 +71,11 @@ namespace bmcp
          **************************/
         std::vector<unsigned> terminals;
 
+         /**************************
+         * is_terminal[t] = true for t in terminals
+         **************************/
+        std::vector<bool> is_terminal;
+
     private:
         /******************************
          * Initializes a new instance.
