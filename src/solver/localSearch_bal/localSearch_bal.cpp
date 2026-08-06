@@ -107,7 +107,7 @@ namespace bmcp
             if (costs[0] + delta_corte <= costs[0])
             {   // operação não piorou corte
                 // muda cromossomo -> u recebe nova cor
-                chromosome[u] = (double)new_color_node_u / instance.num_terminals;
+                chromosome[u] = (new_color_node_u + 0.5) / (double) instance.num_terminals;
                 costs[0] = costs[0] + delta_corte;
 
                 // atualiza components_size
@@ -120,8 +120,8 @@ namespace bmcp
 
                 //atualiza balanceamento
                 int balanceamentoPerfeito = ceil((instance.num_nodes / (double)instance.num_terminals));
-                int maxV = *std::max_element(components_size.begin(), components_size.end()); // maior num de vértices em uma componente
-                costs[1] = maxV / (double) balanceamentoPerfeito;
+                int newMaxV = *std::max_element(components_size.begin(), components_size.end()); // maior num de vértices em uma componente
+                costs[1] = newMaxV / (double) balanceamentoPerfeito;
 
 
                /* 
