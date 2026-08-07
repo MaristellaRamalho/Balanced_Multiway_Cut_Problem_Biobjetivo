@@ -205,7 +205,7 @@ namespace bmcp
         costs[1] = gd / gd_max;
 
         if(DEBUG){
-            std::cout << "f1-Custo do corte: " << custo_corte << "\n Balanceamento perfeito: " << balanceamentoPerfeito << "\n maxV: " << maxV << "\n f2-maxV/balPerfeito: " << costs[1] << "\n";
+            std::cout << "f1-Custo do corte: " << costs[0] << "\n Balanceamento perfeito: " << balanceamentoPerfeito << "\n maxV: " << maxV << " \ngd: " << gd << "\n gd_max: " << gd_max << "\n f2-gd/gd_max: " << costs[1] << "\n";
         }
 
         // vai aplicar busca local
