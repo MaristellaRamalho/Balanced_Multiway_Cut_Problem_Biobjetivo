@@ -1,4 +1,4 @@
-#include "solver/nsbrkgaColoracaoBase/Decoder_Coloracao_Base.hpp"
+#include "solver/nsbrkgaColoracaoBaseMax/Decoder_Coloracao_Base_Max.hpp"
 #include "solver/localSearch_bal/localSearch_bal.hpp"
 #include <limits>
 #include <iostream>
@@ -13,7 +13,7 @@
 namespace bmcp
 {
 
-     Decoder_Coloracao_Base::Decoder_Coloracao_Base(const Instance &instance, std::string local_search_type, unsigned max_local_search_iterations) :  instance(instance), local_search_type(local_search_type), max_local_search_iterations(max_local_search_iterations), init_adjacency_list(instance.num_nodes, -1), position_edge_vector(instance.num_edges * 2, -1),  list_edges(instance.num_edges)
+     Decoder_Coloracao_Base_Max::Decoder_Coloracao_Base_Max(const Instance &instance, std::string local_search_type, unsigned max_local_search_iterations) :  instance(instance), local_search_type(local_search_type), max_local_search_iterations(max_local_search_iterations), init_adjacency_list(instance.num_nodes, -1), position_edge_vector(instance.num_edges * 2, -1),  list_edges(instance.num_edges)
     {
         unsigned list_position = 0;
         unsigned edge_position = 0;
@@ -48,7 +48,7 @@ namespace bmcp
 
 
 
-    Solution Decoder_Coloracao_Base::decode_to_solution(const std::vector<double>& chromosome)  {
+    Solution Decoder_Coloracao_Base_Max::decode_to_solution(const std::vector<double>& chromosome)  {
 
         //cópia local do cromossomo 
         NSBRKGA::Chromosome local_chrom = chromosome;
@@ -128,7 +128,7 @@ namespace bmcp
     }
 
 
-    std::vector<double> Decoder_Coloracao_Base::decode(NSBRKGA::Chromosome &chromosome, bool)
+    std::vector<double> Decoder_Coloracao_Base_Max::decode(NSBRKGA::Chromosome &chromosome, bool)
     {
 
         /// Armazena a cor de cada nó
@@ -191,13 +191,18 @@ namespace bmcp
             }
         }
 
-        //Objetivo 2
+        //Objetivo 2 - balanceamento baseado em penalidade do tipo Max -> normalizado por gd_max
         int balanceamentoPerfeito = ceil((instance.num_nodes / (double)instance.num_terminals));
         int maxV = *std::max_element(components_size.begin(), components_size.end()); // maior num de vértices em uma componente
 
+        double gd = maxV - balanceamentoPerfeito;
+        double gd_max = instance.num_nodes - (instance.num_terminals - 1) - balanceamentoPerfeito;
+
         std::vector<double> costs(instance.num_objectives, -1);
+
+        //Objetivo 1 - corte normalizado pela soma dos custos das arestas
         costs[0] = custo_corte / (double) (instance.cumulative_edge_cost);
-        costs[1] = maxV / (double) balanceamentoPerfeito;
+        costs[1] = gd / gd_max;
 
         if(DEBUG){
             std::cout << "f1-Custo do corte: " << custo_corte << "\n Balanceamento perfeito: " << balanceamentoPerfeito << "\n maxV: " << maxV << "\n f2-maxV/balPerfeito: " << costs[1] << "\n";

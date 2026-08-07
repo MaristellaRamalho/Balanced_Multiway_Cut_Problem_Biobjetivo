@@ -1,4 +1,4 @@
-#include "solver/nsbrkgaColoracaoBase/nsbrkga_solver.hpp"
+#include "solver/nsbrkgaColoracaoBaseMax/nsbrkga_solver.hpp"
 #include "instance/instance.hpp"
 
 namespace bmcp {
@@ -9,7 +9,7 @@ NSBRKGA_Solver::NSBRKGA_Solver(const Instance & instance)
 NSBRKGA_Solver::NSBRKGA_Solver() = default;
 
 void NSBRKGA_Solver::capture_snapshot(
-        const NSBRKGA::NSBRKGA<Decoder_Coloracao_Base> & algorithm) {
+        const NSBRKGA::NSBRKGA<Decoder_Coloracao_Base_Max> & algorithm) {
     double time_snapshot = this->elapsed_time();
 
     this->best_solutions_snapshots.emplace_back(std::make_tuple(
@@ -69,7 +69,7 @@ void NSBRKGA_Solver::capture_snapshot(
 void NSBRKGA_Solver::solve() {
     this->start_time = std::chrono::steady_clock::now();
 
-    Decoder_Coloracao_Base decoderColoracaoBase(this->instance, this->local_search_type, this->max_local_search_iterations);
+    Decoder_Coloracao_Base_Max decoderColoracaoBaseMax(this->instance, this->local_search_type, this->max_local_search_iterations);
 
     NSBRKGA::NsbrkgaParams params;
     params.num_incumbent_solutions = this->max_num_solutions;
@@ -86,7 +86,7 @@ void NSBRKGA_Solver::solve() {
     params.pr_type = this->pr_type;
     params.pr_percentage = this->pr_percentage;
 
-    NSBRKGA::NSBRKGA algorithm(decoderColoracaoBase,
+    NSBRKGA::NSBRKGA algorithm(decoderColoracaoBaseMax,
                              this->instance.senses,
                              this->seed,
                              this->instance.num_nodes,
@@ -259,7 +259,7 @@ void NSBRKGA_Solver::solve() {
     this->best_solutions.clear();
 
     for(const auto & best_individual : this->best_individuals) {
-        this->best_solutions.push_back(decoderColoracaoBase.decode_to_solution(best_individual.second));
+        this->best_solutions.push_back(decoderColoracaoBaseMax.decode_to_solution(best_individual.second));
     }
 
     this->solving_time = this->elapsed_time();

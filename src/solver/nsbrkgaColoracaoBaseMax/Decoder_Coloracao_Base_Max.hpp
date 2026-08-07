@@ -8,7 +8,7 @@
 
 namespace bmcp {
 
-class Decoder_Coloracao_Base {
+class Decoder_Coloracao_Base_Max {
     public:
 
      /// Auxiliary edge structure
@@ -29,7 +29,7 @@ class Decoder_Coloracao_Base {
     /// Auxiliary structure to store the edges of Graph
     std::vector<edge> list_edges;
 
-    Decoder_Coloracao_Base(const Instance & instance, std::string local_search_type, unsigned max_local_search_iterations = 0);
+    Decoder_Coloracao_Base_Max(const Instance & instance, std::string local_search_type, unsigned max_local_search_iterations = 0);
 
     // Retorna custos para o NSBRKGA
     std::vector<double> decode(NSBRKGA::Chromosome & chromosome, bool rewrite);
