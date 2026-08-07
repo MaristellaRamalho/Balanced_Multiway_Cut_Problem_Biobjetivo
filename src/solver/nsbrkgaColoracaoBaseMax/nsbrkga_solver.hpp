@@ -82,7 +82,7 @@ class NSBRKGA_Solver : public Solver {
     /*********************************************************
      * The maximum number of local search iterations allowed (0 means no local search).
      *********************************************************/
-    unsigned max_local_search_iterations = 1000;
+    unsigned max_local_search_iterations = 0;
 
     /************************************************
      * Type of path relinking that will be used.
