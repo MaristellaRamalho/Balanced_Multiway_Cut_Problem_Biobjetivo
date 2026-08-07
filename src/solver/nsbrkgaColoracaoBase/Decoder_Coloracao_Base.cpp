@@ -196,7 +196,7 @@ namespace bmcp
         int maxV = *std::max_element(components_size.begin(), components_size.end()); // maior num de vértices em uma componente
 
         std::vector<double> costs(instance.num_objectives, -1);
-        costs[0] = custo_corte;
+        costs[0] = custo_corte / (double) (instance.cumulative_edge_cost);
         costs[1] = maxV / (double) balanceamentoPerfeito;
 
         if(DEBUG){
