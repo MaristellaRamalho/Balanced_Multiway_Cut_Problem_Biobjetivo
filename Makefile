@@ -315,6 +315,20 @@ $(BIN)/exec/nsbrkgaColoracaoBaseMax_solver_exec : $(BIN)/instance/instance.o \
 
 nsbrkgaColoracaoBaseMax_solver_exec : $(BIN)/exec/nsbrkgaColoracaoBaseMax_solver_exec
 
+$(BIN)/exec/nsbrkgaColoracaoBaseQuad_solver_exec : $(BIN)/instance/instance.o \
+                                  $(BIN)/solution/solution.o \
+                                  $(BIN)/solver/localSearch_bal/localSearch_bal.o \
+                                  $(BIN)/solver/solver.o \
+                                  $(BIN)/solver/nsbrkgaColoracaoBaseQuad/Decoder_Coloracao_Base_Quad.o \
+                                  $(BIN)/solver/nsbrkgaColoracaoBaseQuad/nsbrkga_solver.o \
+                                  $(BIN)/utils/argument_parser.o \
+                                  $(BIN)/exec/nsbrkgaColoracaoBaseQuad_solver_exec.o
+	@echo "--> Linking objects..."
+	$(CPP) -o $@ $^ $(CARGS) $(INC)
+	@echo
+
+nsbrkgaColoracaoBaseQuad_solver_exec : $(BIN)/exec/nsbrkgaColoracaoBaseQuad_solver_exec
+
 $(BIN)/exec/nsbrkgaColoracaoMax_solver_exec : $(BIN)/instance/instance.o \
                                   $(BIN)/solution/solution.o \
                                   $(BIN)/solver/solver.o \
