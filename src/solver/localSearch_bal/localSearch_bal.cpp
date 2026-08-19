@@ -6,7 +6,7 @@
 
 namespace bmcp
 {
-    void switchSingleNodeColor::improve(const Instance &instance, std::vector<unsigned> &components_size, std::vector<std::vector<unsigned>> &componentes_solucao, std::vector<double> &chromosome, std::vector<double> &costs, unsigned max_local_search_iterations)
+    void switchSingleNodeColor::improve(const Instance &instance, std::vector<unsigned> &components_size, std::vector<std::vector<unsigned>> &componentes_solucao, std::vector<double> &chromosome, std::vector<double> &costs, unsigned max_local_search_iterations, char tipoDecoder)
     {
         bool improve = true;
         unsigned cont = 0;
@@ -112,8 +112,10 @@ namespace bmcp
             if (delta_corte <= 0) // aplicar operação não piora corte
             {   
                 // muda cromossomo -> u recebe nova cor
-                chromosome[u_target] = (new_color_node_u + 0.5) / (double) instance.num_terminals; // evita erro de arredondamento -> cair na cor errada
-                costs[0] = costs[0] + delta_corte;
+                chromosome[u_target] = ((double)new_color_node_u / (double)instance.num_terminals) + ((double)1 / (2 * instance.num_terminals)); // evita erro de arredondamento -> cair na cor errada
+                
+                //custo do corte normalizado
+                costs[0] = costs[0] + (delta_corte / (double) instance.cumulative_edge_cost);
 
                 // atualiza components_size
                 components_size[color_node_u] -= 1;
@@ -130,9 +132,25 @@ namespace bmcp
                 // adiciona u na nova componente
                 componentes_solucao[new_color_node_u].push_back(u_target);
 
-                //atualiza balanceamento
+                //atualiza balanceamento de acordo com o tipo de normalização
                 int newMaxV = *std::max_element(components_size.begin(), components_size.end()); // maior num de vértices em uma componente
-                costs[1] = newMaxV / (double) balanceamentoPerfeito;
+                double gd_max = instance.num_nodes - (instance.num_terminals - 1) - balanceamentoPerfeito;
+                double gd = 0;
+
+                if(tipoDecoder == 'm'){
+                    if(DEBUG) std::cout<< "Entrou na norm de bal tipo MAX: " << tipoDecoder << "\n";
+                    gd = newMaxV - balanceamentoPerfeito;
+                    costs[1] = gd/gd_max;
+                }else if(tipoDecoder == 'q'){
+                    if(DEBUG) std::cout<< "Entrou na norm de bal tipo QUAD: " << tipoDecoder << "\n";
+                    //percorre todas as componentes
+                    for(int i = 0; i < instance.num_terminals; i++){
+                        int diferenca = std::max(0, (int)components_size[i] - balanceamentoPerfeito);
+                        gd += pow(diferenca, 2); 
+                    }
+                    costs[1] = sqrt(gd) / gd_max;
+                }
+
                 improve = true;
 
                if(DEBUG)
@@ -149,14 +167,16 @@ namespace bmcp
                 }
 
                 if(DEBUG){
+                     std::cout<< "Tipo de normalização do balanceamento: " << tipoDecoder << "\n";
                      std::cout << "cromossomo[ " << u_target << "] = " << chromosome[u_target] << "\nnovo custo do corte: " << costs[0] << "\n";
-                     std::cout << "newMaxV: " << newMaxV << " | " << "novo balanceamento: " << costs[1] << "\n";
+                    std::cout << "newMaxV: " << newMaxV << "balanceamentoPerfeito:" << balanceamentoPerfeito << " | gd: " << gd << "| gd_max: " << gd_max << "novo balanceamento: " << costs[1] << "\n";
                 }
             }
             else
             {
                 if(DEBUG){
-                    std::cout << "Não houve melhora : novo custo do corte seria " << costs[0] + delta_corte << "\n";
+                    std::cout<< "Tipo de normalização do balanceamento: " << tipoDecoder << "\n";
+                    std::cout << "Não houve melhora : novo custo do corte seria " << (costs[0] * instance.cumulative_edge_cost) + delta_corte << "\n";
                     std::cout << "PARANDO BUSCA \n";
                 }
 
