@@ -7,7 +7,7 @@ PATH_PARETO = os.path.join(BASE_DIR, 'pareto')
 PATH_STATISTICS = os.path.join(BASE_DIR, 'statistics')
 
 tempo = "2048s"
-NOME_SAIDA = f'Resultados_NSBRKGA_Coloracao_Kruskal{tempo}_SBPO.xlsx'
+NOME_SAIDA = f'Resultados_NSBRKGA_{tempo}.xlsx'
 
 
 instancias_base = [
@@ -46,10 +46,9 @@ MAPEAMENTO_LEGENDA = {
     'nsbrkgaColoracaoQuad': 'nsbrkgaColoracaoQuad',
     'nsbrkgaKruskalMax': 'nsbrkgaKruskalMax',
     'nsbrkgaKruskalQuad' : 'nsbrkgaKruskalQuad',
-    'nsbrkgaColoracaoBase': 'nsbrkgaColoracaoBase'
 }
 
-metodos = ["nsbrkgaMax", "nsbrkgaQuad", "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad","nsbrkgaColoracaoBase"]
+metodos = ["nsbrkgaColoracaoMax", "nsbrkgaColoracaoQuad", "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad"]
 seeds = ["1089661", "1602347", "1644410"]
 
 def format_brazilian(val):
