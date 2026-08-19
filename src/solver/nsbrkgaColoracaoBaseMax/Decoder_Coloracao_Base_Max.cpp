@@ -212,7 +212,7 @@ namespace bmcp
         if(max_local_search_iterations > 0){
             // qual busca vai aplicar
             if(local_search_type == "switchSingleNodeColor"){
-                switchSingleNodeColor::improve(instance,components_size, componentes_solucao, chromosome, costs, max_local_search_iterations);
+                switchSingleNodeColor::improve(instance,components_size, componentes_solucao, chromosome, costs, max_local_search_iterations, 'm');
             }
         }
 
