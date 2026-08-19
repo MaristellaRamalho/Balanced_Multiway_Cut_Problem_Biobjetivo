@@ -26,7 +26,7 @@ instances = ["N160_M2N_K10_1", "N160_M2N_K10_2", "N160_M2N_K10_3",
     "N640_M8N_K40_1", "N640_M8N_K40_2", "N640_M8N_K40_3",
     "N640_M8N_K80_1", "N640_M8N_K80_2", "N640_M8N_K80_3"]
 
-solvers =  ["nsbrkgaColoracaoMax", "nsbrkgaColoracaoQuad", "nsbrkgaColoracaoBase", "nsbrkgaColoracaoBaseLocalSearchSNC" "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad", "cplex"]
+solvers =  ["nsbrkgaColoracaoMax", "nsbrkgaColoracaoQuad", "nsbrkgaKruskalMax", "nsbrkgaKruskalQuad", "cplex"]
 
 #Separando solvers com seed -> nsbrkga e solvers sem seed -> método exato
 solvers_with_seed = [s for s in solvers if s != "cplex"]
@@ -34,8 +34,6 @@ solvers_without_seed = ["cplex"]
 
 solver_labels = {"nsbrkgaColoracaoMax": "NS-BRKGA_Coloracao_Max",
                  "nsbrkgaColoracaoQuad": "NS-BRKGA_Coloracao_Quad",
-                 "nsbrkgaColoracaoBase": "NS-BRKGA_Coloracao_Base",
-                 "nsbrkgaColoracaoBaseLocalSearchSNC": "NS-BRKGA_Coloracao_Base+LS_SNC",
                  "nsbrkgaKruskalMax": "NS-BRKGA_Kruskal_Max",
                  "nsbrkgaKruskalQuad": "NS-BRKGA_Kruskal_Quad",
                  "cplex": "CPLEX"}
